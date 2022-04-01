@@ -6,6 +6,7 @@ import (
 	"ecommerce-microservice/user/common/helper"
 	external "ecommerce-microservice/user/infra"
 	"ecommerce-microservice/user/repository/postgres"
+	"ecommerce-microservice/user/usecase/role"
 	"ecommerce-microservice/user/usecase/user"
 	"github.com/labstack/echo/v4"
 	echoSwagger "github.com/swaggo/echo-swagger"
@@ -35,9 +36,14 @@ func (server *Server) InitializeServer() {
 	userUC := user.NewUserImplementation(repoUser, helperInterface)
 	userController := controller.NewUserController(userUC)
 
+	repoRole := postgres.NewRoleRepository(newDB)
+	roleUC := role.NewRoleImplementation(repoRole)
+	roleController := controller.NewRoleController(roleUC)
+
 	apiGroup := server.Route.Group("/api")
 
 	userController.Route(apiGroup)
+	roleController.Route(apiGroup)
 
 	server.Route.GET("/swagger/*", echoSwagger.WrapHandler)
 

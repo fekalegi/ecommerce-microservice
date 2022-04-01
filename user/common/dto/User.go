@@ -1,9 +1,10 @@
 package dto
 
-type RequestAddUser struct {
+type RequestUser struct {
 	Username string `json:"username"`
 	Password string `json:"password"`
 	FullName string `json:"full_name"`
+	RoleID   int    `json:"role_id"`
 }
 
 type ResponseLogin struct {

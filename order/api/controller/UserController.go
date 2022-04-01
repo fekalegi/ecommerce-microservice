@@ -88,7 +88,7 @@ func (u *userController) RefreshAuth(ctx echo.Context) error {
 // @Tags User
 // @Accept  json
 // @Produce  json
-// @Param services body dto.RequestAddUser true "Login Authentication"
+// @Param services body dto.RequestUser true "Login Authentication"
 // @Success 200 {object} models.JSONResponsesSwaggerSucceed
 // @Router /users [post]
 func (u *userController) AddUser(ctx echo.Context) error {

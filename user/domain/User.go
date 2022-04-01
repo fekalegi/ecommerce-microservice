@@ -8,4 +8,7 @@ type User struct {
 	Password string    `json:"password"`
 	FullName string    `json:"full_name"`
 	AuthUUID uuid.UUID `json:"auth_uuid"`
+	RoleID   int       `json:"role_id"`
+
+	Role Role `gorm:"foreignKey:RoleID" json:"Role"`
 }

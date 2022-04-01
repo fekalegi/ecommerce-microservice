@@ -21,7 +21,7 @@ func (u userImplementation) RefreshToken(userID int, authID uuid.UUID) (dto.Json
 		return command.InternalServerResponses("Internal Server Error"), nil
 	}
 	conv := strconv.Itoa(user.ID)
-	token, errCreateToken := u.helper.CreateJwtTokenLogin(conv, user.Username, newAuthID)
+	token, errCreateToken := u.helper.CreateJwtTokenLogin(conv, user.Username, newAuthID, user.RoleID)
 	if errCreateToken != nil {
 		return command.InternalServerResponses(errCreateToken.Error()), err
 	}

@@ -1,20 +1,18 @@
 basePath: /api
 definitions:
-  domain.Note:
+  domain.Role:
     properties:
-      creator:
-        type: integer
-      description:
-        type: string
       id:
         type: integer
-      title:
+      level:
+        type: integer
+      name:
         type: string
-      user:
-        $ref: '#/definitions/domain.User'
     type: object
   domain.User:
     properties:
+      Role:
+        $ref: '#/definitions/domain.Role'
       auth_uuid:
         type: string
       full_name:
@@ -25,15 +23,8 @@ definitions:
         type: string
       password:
         type: string
-    type: object
-  dto.RequestAddUser:
-    properties:
-      full_name:
-        type: string
-      password:
-        type: string
-      username:
-        type: string
+      role_id:
+        type: integer
     type: object
   dto.RequestLogin:
     properties:
@@ -42,11 +33,22 @@ definitions:
       username:
         type: string
     type: object
-  dto.RequestNote:
+  dto.RequestRole:
     properties:
-      description:
+      level:
+        type: integer
+      name:
         type: string
-      title:
+    type: object
+  dto.RequestUser:
+    properties:
+      full_name:
+        type: string
+      password:
+        type: string
+      role_id:
+        type: integer
+      username:
         type: string
     type: object
   models.JSONResponsesSwaggerSucceed:
@@ -75,7 +77,111 @@ info:
   title: Mini Rest Api
   version: "1.0"
 paths:
-  /notes:
+  /role:
+    post:
+      consumes:
+      - application/json
+      description: This endpoint for create new Role
+      parameters:
+      - description: Create new role
+        in: body
+        name: services
+        required: true
+        schema:
+          $ref: '#/definitions/dto.RequestRole'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.JSONResponsesSwaggerSucceed'
+      summary: Create New Role
+      tags:
+      - Role
+  /role{id}:
+    delete:
+      consumes:
+      - application/json
+      description: This endpoint for Delete product category by ID
+      parameters:
+      - description: Role ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: desc
+          schema:
+            allOf:
+            - $ref: '#/definitions/models.JSONResponsesSwaggerSucceed'
+            - properties:
+                data:
+                  $ref: '#/definitions/domain.Role'
+              type: object
+      summary: Delete Role by ID
+      tags:
+      - Role
+    get:
+      consumes:
+      - application/json
+      description: This endpoint for fetch product category by ID
+      parameters:
+      - description: Role ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: desc
+          schema:
+            allOf:
+            - $ref: '#/definitions/models.JSONResponsesSwaggerSucceed'
+            - properties:
+                data:
+                  $ref: '#/definitions/domain.Role'
+              type: object
+      summary: Fetch Role by ID
+      tags:
+      - Role
+    put:
+      consumes:
+      - application/json
+      description: This endpoint for Update product category by ID
+      parameters:
+      - description: Role ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Create new role
+        in: body
+        name: services
+        required: true
+        schema:
+          $ref: '#/definitions/dto.RequestRole'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: desc
+          schema:
+            allOf:
+            - $ref: '#/definitions/models.JSONResponsesSwaggerSucceed'
+            - properties:
+                data:
+                  $ref: '#/definitions/domain.Role'
+              type: object
+      summary: Update Role by ID
+      tags:
+      - Role
+  /roles:
     get:
       consumes:
       - application/json
@@ -91,24 +197,55 @@ paths:
             - properties:
                 data:
                   items:
-                    $ref: '#/definitions/domain.Note'
+                    $ref: '#/definitions/domain.Role'
                   type: array
               type: object
-      summary: Fetch All Note
+      summary: Fetch All Role
       tags:
-      - Note
-  /notes/:
+      - Role
+  /user:
+    get:
+      consumes:
+      - application/json
+      description: This endpoint for fetch all user
+      parameters:
+      - in: query
+        name: filter
+        type: string
+      - in: query
+        name: page_number
+        type: integer
+      - in: query
+        name: page_size
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: desc
+          schema:
+            allOf:
+            - $ref: '#/definitions/models.JSONResponsesSwaggerSucceed'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/domain.User'
+                  type: array
+              type: object
+      summary: Fetch All User
+      tags:
+      - User
     post:
       consumes:
       - application/json
-      description: This endpoint for create new Note
+      description: This endpoint for Add User
       parameters:
-      - description: Create new note
+      - description: Login Authentication
         in: body
         name: services
         required: true
         schema:
-          $ref: '#/definitions/dto.RequestNote'
+          $ref: '#/definitions/dto.RequestUser'
       produces:
       - application/json
       responses:
@@ -116,16 +253,16 @@ paths:
           description: OK
           schema:
             $ref: '#/definitions/models.JSONResponsesSwaggerSucceed'
-      summary: Create New Note
+      summary: Add User
       tags:
-      - Note
-  /notes/{id}:
+      - User
+  /user/{id}:
     delete:
       consumes:
       - application/json
-      description: This endpoint for Delete product category by ID
+      description: This endpoint for Delete user
       parameters:
-      - description: Note ID
+      - description: User Id
         in: path
         name: id
         required: true
@@ -140,17 +277,17 @@ paths:
             - $ref: '#/definitions/models.JSONResponsesSwaggerSucceed'
             - properties:
                 data:
-                  $ref: '#/definitions/domain.Note'
+                  $ref: '#/definitions/domain.User'
               type: object
-      summary: Delete Note by ID
+      summary: Delete User  by ID
       tags:
-      - Note
+      - User
     get:
       consumes:
       - application/json
-      description: This endpoint for fetch product category by ID
+      description: This endpoint for fetch user  by ID
       parameters:
-      - description: Note ID
+      - description: User Id
         in: path
         name: id
         required: true
@@ -165,27 +302,27 @@ paths:
             - $ref: '#/definitions/models.JSONResponsesSwaggerSucceed'
             - properties:
                 data:
-                  $ref: '#/definitions/domain.Note'
+                  $ref: '#/definitions/domain.User'
               type: object
-      summary: Fetch Note by ID
+      summary: Fetch User  by ID
       tags:
-      - Note
-    put:
+      - User
+    patch:
       consumes:
       - application/json
-      description: This endpoint for Update product category by ID
+      description: This endpoint for Update user
       parameters:
-      - description: Note ID
+      - description: User Id
         in: path
         name: id
         required: true
         type: string
-      - description: Create new note
+      - description: Create new services
         in: body
         name: services
         required: true
         schema:
-          $ref: '#/definitions/dto.RequestNote'
+          $ref: '#/definitions/dto.RequestUser'
       produces:
       - application/json
       responses:
@@ -196,11 +333,11 @@ paths:
             - $ref: '#/definitions/models.JSONResponsesSwaggerSucceed'
             - properties:
                 data:
-                  $ref: '#/definitions/domain.Note'
+                  $ref: '#/definitions/domain.User'
               type: object
-      summary: Update Note by ID
+      summary: Update User  by ID
       tags:
-      - Note
+      - User
   /user/authentications:
     delete:
       consumes:
@@ -249,28 +386,6 @@ paths:
           schema:
             $ref: '#/definitions/models.JSONResponsesSwaggerSucceed'
       summary: Refresh Authentication
-      tags:
-      - User
-  /users:
-    post:
-      consumes:
-      - application/json
-      description: This endpoint for Add User
-      parameters:
-      - description: Login Authentication
-        in: body
-        name: services
-        required: true
-        schema:
-          $ref: '#/definitions/dto.RequestAddUser'
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/models.JSONResponsesSwaggerSucceed'
-      summary: Add User
       tags:
       - User
 swagger: "2.0"

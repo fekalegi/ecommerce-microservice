@@ -26,7 +26,11 @@ func NewUserController(userService usecase.UserService) *userController {
 func (u *userController) Route(group *echo.Group) {
 	group.POST("/user/authentications", u.LoginAuth)
 	group.PUT("/user/authentications", u.RefreshAuth, middleware.KeyAuth(middlewares.RefreshCheck))
-	group.POST("/users", u.AddUser)
+	group.POST("/user", u.AddUser)
+	group.PATCH("/user/:id", u.UpdateUser)
+	group.GET("/user", u.FetchAllUser)
+	group.GET("/user/:id", u.FetchUser)
+	group.DELETE("/user/:id", u.DeleteUser)
 	group.DELETE("/user/authentications", u.DeleteAuth, middleware.KeyAuth(middlewares.RefreshCheck))
 }
 
@@ -88,11 +92,11 @@ func (u *userController) RefreshAuth(ctx echo.Context) error {
 // @Tags User
 // @Accept  json
 // @Produce  json
-// @Param services body dto.RequestAddUser true "Login Authentication"
+// @Param services body dto.RequestUser true "Login Authentication"
 // @Success 200 {object} models.JSONResponsesSwaggerSucceed
-// @Router /users [post]
+// @Router /user [post]
 func (u *userController) AddUser(ctx echo.Context) error {
-	request := dto.RequestAddUser{}
+	request := dto.RequestUser{}
 	err := models.ValidateRequest(ctx, &request)
 
 	if err != nil {
@@ -132,4 +136,110 @@ func (u *userController) DeleteAuth(ctx echo.Context) error {
 		return err
 	}
 	return ctx.JSON(result.Code, result)
+}
+
+// FetchAllUser : Fetch All User
+// @Summary Fetch All User
+// @Description This endpoint for fetch all user
+// @Tags User
+// @Accept  json
+// @Produce  json
+// @Param services query dto.RequestPagination true "Parameter with pagination"
+// @Success 200 {object} models.JSONResponsesSwaggerSucceed{data=[]domain.User} "desc"
+// @Router /user [get]
+func (u *userController) FetchAllUser(ctx echo.Context) error {
+	request := dto.RequestPagination{}
+
+	err := models.ValidateRequest(ctx, &request)
+	if err != nil {
+		return err
+	}
+
+	responses, err := u.userService.FetchAllUser(request)
+	if err != nil {
+		return err
+	}
+	return ctx.JSON(responses.Code, responses)
+}
+
+// FetchUser : Fetch User  by ID
+// @Summary Fetch User  by ID
+// @Description This endpoint for fetch user  by ID
+// @Tags User
+// @Accept  json
+// @Produce  json
+// @Param id path string true "User Id"
+// @Success 200 {object} models.JSONResponsesSwaggerSucceed{data=domain.User} "desc"
+// @Router /user/{id} [get]
+func (u *userController) FetchUser(ctx echo.Context) error {
+	parameter := ctx.Param("id")
+
+	converted, err := strconv.Atoi(parameter)
+	if err != nil {
+		return err
+	}
+
+	responses, err := u.userService.FetchUser(converted)
+	if err != nil {
+		return err
+	}
+	return ctx.JSON(responses.Code, responses)
+}
+
+// UpdateUser : Update User  by ID
+// @Summary Update User  by ID
+// @Description This endpoint for Update user
+// @Tags User
+// @Accept  json
+// @Produce  json
+// @Param id path string true "User Id"
+// @Param services body dto.RequestUser true "Create new services"
+// @Success 200 {object} models.JSONResponsesSwaggerSucceed{data=domain.User} "desc"
+// @Router /user/{id} [PATCH]
+func (u *userController) UpdateUser(ctx echo.Context) error {
+	parameter := ctx.Param("id")
+
+	converted, err := strconv.Atoi(parameter)
+	if err != nil {
+		return err
+	}
+
+	request := dto.RequestUser{}
+
+	err = models.ValidateRequest(ctx, &request)
+
+	if err != nil {
+		return err
+	}
+
+	responses, err := u.userService.UpdateUser(converted, request)
+	if err != nil {
+		return err
+	}
+	return ctx.JSON(responses.Code, responses)
+}
+
+// DeleteUser : Delete User  by ID
+// @Summary Delete User  by ID
+// @Description This endpoint for Delete user
+// @Tags User
+// @Accept  json
+// @Produce  json
+// @Param id path string true "User Id"
+// @Success 200 {object} models.JSONResponsesSwaggerSucceed{data=domain.User} "desc"
+// @Router /user/{id} [DELETE]
+func (u *userController) DeleteUser(ctx echo.Context) error {
+	parameter := ctx.Param("id")
+
+	converted, err := strconv.Atoi(parameter)
+	if err != nil {
+		return err
+	}
+
+	responses, err := u.userService.DeleteUser(converted)
+
+	if err != nil {
+		return err
+	}
+	return ctx.JSON(responses.Code, responses)
 }

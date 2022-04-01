@@ -6,11 +6,12 @@ import (
 	"ecommerce-microservice/user/domain"
 )
 
-func (u userImplementation) AddUser(request dto.RequestAddUser) (dto.JsonResponses, error) {
+func (u userImplementation) AddUser(request dto.RequestUser) (dto.JsonResponses, error) {
 	user := domain.User{
 		Username: request.Username,
 		Password: request.Password,
 		FullName: request.FullName,
+		RoleID:   request.RoleID,
 	}
 	newUser, err := u.repo.AddUser(user)
 	if err != nil {

@@ -24,7 +24,41 @@ const docTemplate = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
-        "/notes": {
+        "/role": {
+            "post": {
+                "description": "This endpoint for create new Role",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Role"
+                ],
+                "summary": "Create New Role",
+                "parameters": [
+                    {
+                        "description": "Create new role",
+                        "name": "services",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dto.RequestRole"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.JSONResponsesSwaggerSucceed"
+                        }
+                    }
+                }
+            }
+        },
+        "/roles": {
             "get": {
                 "description": "This endpoint for fetch all product category",
                 "consumes": [
@@ -34,9 +68,9 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "Note"
+                    "Role"
                 ],
-                "summary": "Fetch All Note",
+                "summary": "Fetch All Role",
                 "responses": {
                     "200": {
                         "description": "desc",
@@ -51,7 +85,7 @@ const docTemplate = `{
                                         "data": {
                                             "type": "array",
                                             "items": {
-                                                "$ref": "#/definitions/domain.Note"
+                                                "$ref": "#/definitions/domain.Role"
                                             }
                                         }
                                     }
@@ -62,41 +96,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/notes/": {
-            "post": {
-                "description": "This endpoint for create new Note",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Note"
-                ],
-                "summary": "Create New Note",
-                "parameters": [
-                    {
-                        "description": "Create new note",
-                        "name": "services",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/dto.RequestNote"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/models.JSONResponsesSwaggerSucceed"
-                        }
-                    }
-                }
-            }
-        },
-        "/notes/{id}": {
+        "/role{id}": {
             "get": {
                 "description": "This endpoint for fetch product category by ID",
                 "consumes": [
@@ -106,13 +106,13 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "Note"
+                    "Role"
                 ],
-                "summary": "Fetch Note by ID",
+                "summary": "Fetch Role by ID",
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "Note ID",
+                        "description": "Role ID",
                         "name": "id",
                         "in": "path",
                         "required": true
@@ -130,7 +130,7 @@ const docTemplate = `{
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/domain.Note"
+                                            "$ref": "#/definitions/domain.Role"
                                         }
                                     }
                                 }
@@ -148,24 +148,24 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "Note"
+                    "Role"
                 ],
-                "summary": "Update Note by ID",
+                "summary": "Update Role by ID",
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "Note ID",
+                        "description": "Role ID",
                         "name": "id",
                         "in": "path",
                         "required": true
                     },
                     {
-                        "description": "Create new note",
+                        "description": "Create new role",
                         "name": "services",
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/dto.RequestNote"
+                            "$ref": "#/definitions/dto.RequestRole"
                         }
                     }
                 ],
@@ -181,7 +181,7 @@ const docTemplate = `{
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/domain.Note"
+                                            "$ref": "#/definitions/domain.Role"
                                         }
                                     }
                                 }
@@ -199,13 +199,13 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "Note"
+                    "Role"
                 ],
-                "summary": "Delete Note by ID",
+                "summary": "Delete Role by ID",
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "Note ID",
+                        "description": "Role ID",
                         "name": "id",
                         "in": "path",
                         "required": true
@@ -223,11 +223,98 @@ const docTemplate = `{
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/domain.Note"
+                                            "$ref": "#/definitions/domain.Role"
                                         }
                                     }
                                 }
                             ]
+                        }
+                    }
+                }
+            }
+        },
+        "/user": {
+            "get": {
+                "description": "This endpoint for fetch all user",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "User"
+                ],
+                "summary": "Fetch All User",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "name": "filter",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "name": "page_number",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "name": "page_size",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "desc",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/models.JSONResponsesSwaggerSucceed"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/definitions/domain.User"
+                                            }
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            },
+            "post": {
+                "description": "This endpoint for Add User",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "User"
+                ],
+                "summary": "Add User",
+                "parameters": [
+                    {
+                        "description": "Login Authentication",
+                        "name": "services",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dto.RequestUser"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.JSONResponsesSwaggerSucceed"
                         }
                     }
                 }
@@ -309,9 +396,9 @@ const docTemplate = `{
                 }
             }
         },
-        "/users": {
-            "post": {
-                "description": "This endpoint for Add User",
+        "/user/{id}": {
+            "get": {
+                "description": "This endpoint for fetch user  by ID",
                 "consumes": [
                     "application/json"
                 ],
@@ -321,23 +408,126 @@ const docTemplate = `{
                 "tags": [
                     "User"
                 ],
-                "summary": "Add User",
+                "summary": "Fetch User  by ID",
                 "parameters": [
                     {
-                        "description": "Login Authentication",
+                        "type": "string",
+                        "description": "User Id",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "desc",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/models.JSONResponsesSwaggerSucceed"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/domain.User"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "description": "This endpoint for Delete user",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "User"
+                ],
+                "summary": "Delete User  by ID",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "User Id",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "desc",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/models.JSONResponsesSwaggerSucceed"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/domain.User"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            },
+            "patch": {
+                "description": "This endpoint for Update user",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "User"
+                ],
+                "summary": "Update User  by ID",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "User Id",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Create new services",
                         "name": "services",
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/dto.RequestAddUser"
+                            "$ref": "#/definitions/dto.RequestUser"
                         }
                     }
                 ],
                 "responses": {
                     "200": {
-                        "description": "OK",
+                        "description": "desc",
                         "schema": {
-                            "$ref": "#/definitions/models.JSONResponsesSwaggerSucceed"
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/models.JSONResponsesSwaggerSucceed"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/domain.User"
+                                        }
+                                    }
+                                }
+                            ]
                         }
                     }
                 }
@@ -345,29 +535,26 @@ const docTemplate = `{
         }
     },
     "definitions": {
-        "domain.Note": {
+        "domain.Role": {
             "type": "object",
             "properties": {
-                "creator": {
-                    "type": "integer"
-                },
-                "description": {
-                    "type": "string"
-                },
                 "id": {
                     "type": "integer"
                 },
-                "title": {
-                    "type": "string"
+                "level": {
+                    "type": "integer"
                 },
-                "user": {
-                    "$ref": "#/definitions/domain.User"
+                "name": {
+                    "type": "string"
                 }
             }
         },
         "domain.User": {
             "type": "object",
             "properties": {
+                "Role": {
+                    "$ref": "#/definitions/domain.Role"
+                },
                 "auth_uuid": {
                     "type": "string"
                 },
@@ -382,20 +569,9 @@ const docTemplate = `{
                 },
                 "password": {
                     "type": "string"
-                }
-            }
-        },
-        "dto.RequestAddUser": {
-            "type": "object",
-            "properties": {
-                "full_name": {
-                    "type": "string"
                 },
-                "password": {
-                    "type": "string"
-                },
-                "username": {
-                    "type": "string"
+                "role_id": {
+                    "type": "integer"
                 }
             }
         },
@@ -410,13 +586,30 @@ const docTemplate = `{
                 }
             }
         },
-        "dto.RequestNote": {
+        "dto.RequestRole": {
             "type": "object",
             "properties": {
-                "description": {
+                "level": {
+                    "type": "integer"
+                },
+                "name": {
+                    "type": "string"
+                }
+            }
+        },
+        "dto.RequestUser": {
+            "type": "object",
+            "properties": {
+                "full_name": {
                     "type": "string"
                 },
-                "title": {
+                "password": {
+                    "type": "string"
+                },
+                "role_id": {
+                    "type": "integer"
+                },
+                "username": {
                     "type": "string"
                 }
             }

@@ -15,11 +15,12 @@ func NewHelperFunction() interfaces.HelperInterface {
 
 type helperImplementation struct{}
 
-func (h helperImplementation) CreateJwtTokenLogin(userID, username string, authID uuid.UUID) (token string, err error) {
+func (h helperImplementation) CreateJwtTokenLogin(userID, username string, authID uuid.UUID, roleID int) (token string, err error) {
 	rtClaims := jwt.MapClaims{}
 	rtClaims["user_id"] = userID
 	rtClaims["username"] = username
 	rtClaims["auth_id"] = authID
+	rtClaims["role_id"] = roleID
 	rtClaims["exp"] = time.Now().Add(time.Hour * 24).Unix()
 
 	rt := jwt.NewWithClaims(jwt.SigningMethodHS256, rtClaims)

@@ -22,7 +22,7 @@ func (u userImplementation) CheckLogin(username string, password string) (dto.Js
 	}
 	conv := strconv.Itoa(user.ID)
 
-	token, errCreateToken := u.helper.CreateJwtTokenLogin(conv, user.Username, authID)
+	token, errCreateToken := u.helper.CreateJwtTokenLogin(conv, user.Username, authID, user.RoleID)
 	if errCreateToken != nil {
 		return command.InternalServerResponses(errCreateToken.Error()), err
 	}
