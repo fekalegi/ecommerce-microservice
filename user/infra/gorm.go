@@ -26,7 +26,7 @@ func NewGormDB() *gorm.DB {
 		}
 
 		if common.IsMigrate && dbInstance == nil {
-			err = DBInstance.AutoMigrate(&domain.User{}, &domain.Note{})
+			err = DBInstance.AutoMigrate(&domain.User{})
 			exception.PanicIfNeeded(err)
 
 			if err == nil {
