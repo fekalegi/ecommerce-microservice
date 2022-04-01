@@ -9,7 +9,6 @@ import (
 	"github.com/google/uuid"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
-	"log"
 )
 
 // CategoryController : Controller for Category Api
@@ -27,8 +26,8 @@ func (c *categoryController) Route(group *echo.Group) {
 	group.POST("/category", c.CreateCategory, middleware.KeyAuth(middlewares.AuthCheck))
 	group.GET("/category", c.FetchAllCategory)
 	group.GET("/category/:id", c.FetchCategory)
-	group.PATCH("/category/:id", c.UpdateCategory)
-	group.DELETE("/category/:id", c.DeleteCategory)
+	group.PATCH("/category/:id", c.UpdateCategory, middleware.KeyAuth(middlewares.AuthCheck))
+	group.DELETE("/category/:id", c.DeleteCategory, middleware.KeyAuth(middlewares.AuthCheck))
 }
 
 // CreateCategory godoc
@@ -42,9 +41,7 @@ func (c *categoryController) Route(group *echo.Group) {
 // @Router /category [post]
 func (c *categoryController) CreateCategory(ctx echo.Context) error {
 
-	log.Println(ctx)
 	userID, level, err := helper.GetUserDetailFromContext(ctx)
-	log.Println(userID, level)
 
 	if err != nil {
 		return err
@@ -124,6 +121,12 @@ func (c *categoryController) FetchCategory(ctx echo.Context) error {
 // @Success 200 {object} models.JSONResponsesSwaggerSucceed{data=domain.Category} "desc"
 // @Router /category/{id} [PATCH]
 func (c *categoryController) UpdateCategory(ctx echo.Context) error {
+	userID, level, err := helper.GetUserDetailFromContext(ctx)
+
+	if err != nil {
+		return err
+	}
+
 	parameter := ctx.Param("id")
 
 	converted, err := uuid.Parse(parameter)
@@ -139,7 +142,7 @@ func (c *categoryController) UpdateCategory(ctx echo.Context) error {
 		return err
 	}
 
-	responses, err := c.categoryService.UpdateCategoryCommand(converted, request, 0, 0)
+	responses, err := c.categoryService.UpdateCategoryCommand(converted, request, *userID, *level)
 	if err != nil {
 		return err
 	}
@@ -156,6 +159,12 @@ func (c *categoryController) UpdateCategory(ctx echo.Context) error {
 // @Success 200 {object} models.JSONResponsesSwaggerSucceed{data=domain.Category} "desc"
 // @Router /category/{id} [DELETE]
 func (c *categoryController) DeleteCategory(ctx echo.Context) error {
+	userID, level, err := helper.GetUserDetailFromContext(ctx)
+
+	if err != nil {
+		return err
+	}
+
 	parameter := ctx.Param("id")
 
 	converted, err := uuid.Parse(parameter)
@@ -163,7 +172,7 @@ func (c *categoryController) DeleteCategory(ctx echo.Context) error {
 		return err
 	}
 
-	responses, err := c.categoryService.DeleteCategoryCommand(converted, 0, 0)
+	responses, err := c.categoryService.DeleteCategoryCommand(converted, *userID, *level)
 	if err != nil {
 		return err
 	}
