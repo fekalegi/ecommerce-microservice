@@ -1,7 +1,7 @@
 package main
 
 import (
-	"ecommerce-microservice/order/api"
+	"ecommerce-microservice/product/api"
 	"fmt"
 	"github.com/labstack/echo/v4"
 )

@@ -1,10 +1,10 @@
 package external
 
 import (
-	"ecommerce-microservice/order/common"
-	"ecommerce-microservice/order/common/command"
-	"ecommerce-microservice/order/common/exception"
-	"ecommerce-microservice/order/domain"
+	"ecommerce-microservice/product/common"
+	"ecommerce-microservice/product/common/command"
+	"ecommerce-microservice/product/common/exception"
+	"ecommerce-microservice/product/domain"
 	"fmt"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
@@ -26,7 +26,7 @@ func NewGormDB() *gorm.DB {
 		}
 
 		if common.IsMigrate && dbInstance == nil {
-			err = DBInstance.AutoMigrate(&domain.User{}, &domain.Note{})
+			err = DBInstance.AutoMigrate(&domain.Category{}, &domain.Product{})
 			exception.PanicIfNeeded(err)
 
 			if err == nil {

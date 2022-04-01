@@ -1,21 +1,22 @@
 package usecase
 
 import (
-	"ecommerce-microservice/order/common/dto"
+	"ecommerce-microservice/product/common/dto"
 	"github.com/google/uuid"
 )
 
-type UserService interface {
-	CheckLogin(username string, password string) (dto.JsonResponses, error)
-	AddUser(request dto.RequestAddUser) (dto.JsonResponses, error)
-	RefreshToken(userID int, authID uuid.UUID) (dto.JsonResponses, error)
-	DeleteAuth(userID int, authID uuid.UUID) (dto.JsonResponses, error)
+type ProductService interface {
+	CreateProductCommand(request dto.RequestProduct, userID int, level int) (dto.JsonResponses, error)
+	FetchAllProductQuery(request dto.RequestPagination) (dto.JsonResponsesPagination, error)
+	FetchProductQuery(id uuid.UUID) (dto.JsonResponses, error)
+	UpdateProductCommand(id uuid.UUID, request dto.RequestUpdateProduct, userID int, level int) (dto.JsonResponses, error)
+	DeleteProductCommand(id uuid.UUID, userID int, level int) (dto.JsonResponses, error)
 }
 
-type NoteService interface {
-	CreateNote(request dto.RequestNote, userID int) (dto.JsonResponses, error)
-	FetchNote(id int) (dto.JsonResponses, error)
-	FetchAllNote() (dto.JsonResponses, error)
-	UpdateNote(id int, userID int, request dto.RequestNote) (dto.JsonResponses, error)
-	DeleteNote(id int, userID int) (dto.JsonResponses, error)
+type CategoryService interface {
+	CreateCategoryCommand(request dto.RequestCategory, userID int, level int) (dto.JsonResponses, error)
+	FetchAllCategoryQuery(request dto.RequestPagination) (dto.JsonResponsesPagination, error)
+	FetchCategoryQuery(id uuid.UUID) (dto.JsonResponses, error)
+	UpdateCategoryCommand(id uuid.UUID, request dto.RequestUpdateCategory, userID int, level int) (dto.JsonResponses, error)
+	DeleteCategoryCommand(id uuid.UUID, userID int, level int) (dto.JsonResponses, error)
 }

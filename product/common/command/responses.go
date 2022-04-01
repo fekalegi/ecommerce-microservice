@@ -1,6 +1,6 @@
 package command
 
-import "ecommerce-microservice/order/common/dto"
+import "ecommerce-microservice/product/common/dto"
 
 func SuccessResponses(data interface{}) (result dto.JsonResponses) {
 	return dto.JsonResponses{

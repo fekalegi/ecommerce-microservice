@@ -1,8 +1,8 @@
 package exception
 
 import (
-	"ecommerce-microservice/order/common"
-	"ecommerce-microservice/order/common/models"
+	"ecommerce-microservice/product/common"
+	"ecommerce-microservice/product/common/models"
 )
 
 // NotFoundExceptions : Http Status Handle for 404

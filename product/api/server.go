@@ -1,19 +1,17 @@
 package api
 
 import (
-	"ecommerce-microservice/order/api/controller"
-	"ecommerce-microservice/order/api/handler"
-	"ecommerce-microservice/order/common/helper"
-	external "ecommerce-microservice/order/infra"
-	"ecommerce-microservice/order/repository/postgres"
-	"ecommerce-microservice/order/usecase/note"
-	"ecommerce-microservice/order/usecase/user"
+	"ecommerce-microservice/product/api/controller"
+	"ecommerce-microservice/product/api/handler"
+	external "ecommerce-microservice/product/infra"
+	"ecommerce-microservice/product/repository/postgres"
+	"ecommerce-microservice/product/usecase/category"
 	"github.com/labstack/echo/v4"
 	echoSwagger "github.com/swaggo/echo-swagger"
 	"net/http"
 	"time"
 
-	_ "ecommerce-microservice/order/docs"
+	_ "ecommerce-microservice/product/docs"
 )
 
 // Server Struct
@@ -29,21 +27,20 @@ func NewServer(e *echo.Echo) *Server {
 }
 
 func (server *Server) InitializeServer() {
+
 	newDB := external.NewGormDB()
 
-	helperInterface := helper.NewHelperFunction()
-	repoUser := postgres.NewUserRepository(newDB)
-	userUC := user.NewUserImplementation(repoUser, helperInterface)
-	userController := controller.NewUserController(userUC)
+	repoCategory := postgres.NewCategoryRepository(newDB)
+	categoryUC := category.NewCategoryService(repoCategory)
+	categoryController := controller.NewCategoryController(categoryUC)
 
-	repoNote := postgres.NewNoteRepository(newDB)
-	noteUC := note.NewNoteImplementation(repoNote)
-	noteController := controller.NewNoteController(noteUC)
+	//repoProduct := postgres.NewProductRepository(newDB)
+	//productUC := product.NewProductService(repoProduct)
+	//categoryController := controller.NewProdu(productUC)
 
 	apiGroup := server.Route.Group("/api")
 
-	userController.Route(apiGroup)
-	noteController.Route(apiGroup)
+	categoryController.Route(apiGroup)
 
 	server.Route.GET("/swagger/*", echoSwagger.WrapHandler)
 

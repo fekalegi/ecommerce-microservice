@@ -1,22 +1,24 @@
 package repository
 
 import (
-	"ecommerce-microservice/order/domain"
+	"ecommerce-microservice/product/domain"
 	"github.com/google/uuid"
 )
 
-type UserRepository interface {
-	CheckLogin(username string, password string) (*domain.User, error)
-	FindUserByID(id int) (*domain.User, error)
-	FindUserByIDAndAuthID(id int, authID uuid.UUID) (*domain.User, error)
-	AddUser(user domain.User) (*domain.User, error)
-	UpdateAuthUUID(id int, authID uuid.UUID) error
+//go:generate mockgen -destination=../mocks/repository/mock_repository.go -package=mock_repository -source=repository_interface.go
+
+type ProductRepository interface {
+	CreateProduct(product domain.Product) error
+	FetchAllProduct(offset int, limit int, filter string) ([]domain.Product, int64, error)
+	FetchProductByID(id uuid.UUID) (*domain.Product, error)
+	UpdateProduct(id uuid.UUID, request domain.Product) error
+	DeleteProduct(id uuid.UUID) error
 }
 
-type NoteRepository interface {
-	CreateNote(note domain.Note) (*domain.Note, error)
-	FetchNoteByID(id int) (*domain.Note, error)
-	FetchAllNote() ([]domain.Note, error)
-	UpdateNote(note domain.Note) error
-	DeleteNote(id int) error
+type CategoryRepository interface {
+	CreateCategory(product domain.Category) error
+	FetchAllCategory(offset int, limit int, filter string) ([]domain.Category, int64, error)
+	FetchCategoryByID(id uuid.UUID) (*domain.Category, error)
+	UpdateCategory(id uuid.UUID, request domain.Category) error
+	DeleteCategory(id uuid.UUID) error
 }
