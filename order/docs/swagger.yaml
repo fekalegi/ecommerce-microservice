@@ -1,0 +1,276 @@
+basePath: /api
+definitions:
+  domain.Note:
+    properties:
+      creator:
+        type: integer
+      description:
+        type: string
+      id:
+        type: integer
+      title:
+        type: string
+      user:
+        $ref: '#/definitions/domain.User'
+    type: object
+  domain.User:
+    properties:
+      auth_uuid:
+        type: string
+      full_name:
+        type: string
+      id:
+        type: integer
+      name:
+        type: string
+      password:
+        type: string
+    type: object
+  dto.RequestAddUser:
+    properties:
+      full_name:
+        type: string
+      password:
+        type: string
+      username:
+        type: string
+    type: object
+  dto.RequestLogin:
+    properties:
+      password:
+        type: string
+      username:
+        type: string
+    type: object
+  dto.RequestNote:
+    properties:
+      description:
+        type: string
+      title:
+        type: string
+    type: object
+  models.JSONResponsesSwaggerSucceed:
+    properties:
+      code:
+        default: 200
+        example: 200
+        type: integer
+      data:
+        default: nil
+        type: string
+      status:
+        default: Succeed
+        example: Succeed
+        type: string
+    type: object
+info:
+  contact:
+    email: fekalegi@gmail.com
+    name: Feka Legi Heryana Rizki
+  description: This is swagger for  Mini Rest Api
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  termsOfService: http://swagger.io/terms/
+  title: Mini Rest Api
+  version: "1.0"
+paths:
+  /notes:
+    get:
+      consumes:
+      - application/json
+      description: This endpoint for fetch all product category
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: desc
+          schema:
+            allOf:
+            - $ref: '#/definitions/models.JSONResponsesSwaggerSucceed'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/domain.Note'
+                  type: array
+              type: object
+      summary: Fetch All Note
+      tags:
+      - Note
+  /notes/:
+    post:
+      consumes:
+      - application/json
+      description: This endpoint for create new Note
+      parameters:
+      - description: Create new note
+        in: body
+        name: services
+        required: true
+        schema:
+          $ref: '#/definitions/dto.RequestNote'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.JSONResponsesSwaggerSucceed'
+      summary: Create New Note
+      tags:
+      - Note
+  /notes/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: This endpoint for Delete product category by ID
+      parameters:
+      - description: Note ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: desc
+          schema:
+            allOf:
+            - $ref: '#/definitions/models.JSONResponsesSwaggerSucceed'
+            - properties:
+                data:
+                  $ref: '#/definitions/domain.Note'
+              type: object
+      summary: Delete Note by ID
+      tags:
+      - Note
+    get:
+      consumes:
+      - application/json
+      description: This endpoint for fetch product category by ID
+      parameters:
+      - description: Note ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: desc
+          schema:
+            allOf:
+            - $ref: '#/definitions/models.JSONResponsesSwaggerSucceed'
+            - properties:
+                data:
+                  $ref: '#/definitions/domain.Note'
+              type: object
+      summary: Fetch Note by ID
+      tags:
+      - Note
+    put:
+      consumes:
+      - application/json
+      description: This endpoint for Update product category by ID
+      parameters:
+      - description: Note ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Create new note
+        in: body
+        name: services
+        required: true
+        schema:
+          $ref: '#/definitions/dto.RequestNote'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: desc
+          schema:
+            allOf:
+            - $ref: '#/definitions/models.JSONResponsesSwaggerSucceed'
+            - properties:
+                data:
+                  $ref: '#/definitions/domain.Note'
+              type: object
+      summary: Update Note by ID
+      tags:
+      - Note
+  /user/authentications:
+    delete:
+      consumes:
+      - application/json
+      description: This endpoint for Delete Authentication
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.JSONResponsesSwaggerSucceed'
+      summary: Delete Authentication
+      tags:
+      - User
+    post:
+      consumes:
+      - application/json
+      description: This endpoint for Login Authentication
+      parameters:
+      - description: Login Authentication
+        in: body
+        name: services
+        required: true
+        schema:
+          $ref: '#/definitions/dto.RequestLogin'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.JSONResponsesSwaggerSucceed'
+      summary: Login Authentication
+      tags:
+      - User
+    put:
+      consumes:
+      - application/json
+      description: This endpoint for Refresh Authentication
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.JSONResponsesSwaggerSucceed'
+      summary: Refresh Authentication
+      tags:
+      - User
+  /users:
+    post:
+      consumes:
+      - application/json
+      description: This endpoint for Add User
+      parameters:
+      - description: Login Authentication
+        in: body
+        name: services
+        required: true
+        schema:
+          $ref: '#/definitions/dto.RequestAddUser'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.JSONResponsesSwaggerSucceed'
+      summary: Add User
+      tags:
+      - User
+swagger: "2.0"
