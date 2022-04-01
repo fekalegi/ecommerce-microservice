@@ -50,7 +50,7 @@ func (server *Server) InitializeServer() {
 	handler.UseCustomValidatorHandler(server.Route)
 
 	serverConfiguration := &http.Server{
-		Addr:         ":5000",
+		Addr:         ":5002",
 		ReadTimeout:  20 * time.Minute,
 		WriteTimeout: 20 * time.Minute,
 	}
