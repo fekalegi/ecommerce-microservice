@@ -60,7 +60,7 @@ func (u userRepository) UpdateAuthUUID(id int, authID uuid.UUID) error {
 
 func (u userRepository) FindUserByIDAndAuthID(id int, authID uuid.UUID) (*domain.User, error) {
 	var user domain.User
-	err := u.db.Where("auth_uuid = ?", authID).First(&user, id).Error
+	err := u.db.Preload("Role").Where("auth_uuid = ?", authID).First(&user, id).Error
 	if err != nil && errors.Is(err, gorm.ErrRecordNotFound) {
 		return nil, nil
 	} else if err != nil {
