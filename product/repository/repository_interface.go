@@ -16,9 +16,16 @@ type ProductRepository interface {
 }
 
 type CategoryRepository interface {
-	CreateCategory(product domain.Category) error
+	CreateCategory(category domain.Category) error
 	FetchAllCategory(offset int, limit int, filter string) ([]domain.Category, int64, error)
 	FetchCategoryByID(id uuid.UUID) (*domain.Category, error)
 	UpdateCategory(id uuid.UUID, request domain.Category) error
 	DeleteCategory(id uuid.UUID) error
+}
+
+type WishlistRepository interface {
+	CreateWishlist(wishlist domain.Wishlist) error
+	FetchAllWishlistByUserID(userID int, offset int, limit int, filter string) ([]domain.Wishlist, int64, error)
+	FetchWishlistByID(id uuid.UUID) (*domain.Wishlist, error)
+	HardDeleteWishlist(id uuid.UUID) error
 }

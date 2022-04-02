@@ -8,6 +8,11 @@ import (
 )
 
 func (i impl) UpdateProductCommand(id uuid.UUID, request dto.RequestUpdateProduct, userID int, levelUser int) (dto.JsonResponses, error) {
+	switch levelUser {
+	case 1, 2, 3:
+	default:
+		return command.UnauthorizedResponses("Unauthorized"), nil
+	}
 	current, err := i.repository.FetchProductByID(id)
 
 	if current == nil && err == nil {
@@ -16,7 +21,7 @@ func (i impl) UpdateProductCommand(id uuid.UUID, request dto.RequestUpdateProduc
 		return command.InternalServerResponses(""), err
 	}
 
-	unit := domain.Product{
+	product := domain.Product{
 		ID:          id,
 		Name:        request.Name,
 		Description: request.Description,
@@ -24,9 +29,10 @@ func (i impl) UpdateProductCommand(id uuid.UUID, request dto.RequestUpdateProduc
 		Stock:       request.Stock,
 		CategoryID:  request.CategoryID,
 		UserID:      userID,
+		AuditTable:  domain.AuditTable{UpdatedBy: userID},
 	}
 
-	err = i.repository.UpdateProduct(id, unit)
+	err = i.repository.UpdateProduct(id, product)
 
 	if err != nil {
 		return command.InternalServerResponses(""), err

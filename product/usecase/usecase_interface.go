@@ -20,3 +20,10 @@ type CategoryService interface {
 	UpdateCategoryCommand(id uuid.UUID, request dto.RequestUpdateCategory, userID int, level int) (dto.JsonResponses, error)
 	DeleteCategoryCommand(id uuid.UUID, userID int, level int) (dto.JsonResponses, error)
 }
+
+type WishlistService interface {
+	CreateWishlistCommand(request dto.RequestWishlist, userID int, level int) (dto.JsonResponses, error)
+	FetchAllWishlistByUserID(request dto.RequestPagination, userID int) (dto.JsonResponsesPagination, error)
+	FetchWishlistQuery(id uuid.UUID) (dto.JsonResponses, error)
+	DeleteWishlistCommand(id uuid.UUID, userID int, level int) (dto.JsonResponses, error)
+}

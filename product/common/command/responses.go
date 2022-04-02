@@ -18,6 +18,14 @@ func NotFoundResponses(status interface{}) (result dto.JsonResponses) {
 	}
 }
 
+func UnauthorizedResponses(status interface{}) (result dto.JsonResponses) {
+	return dto.JsonResponses{
+		Status: status,
+		Data:   nil,
+		Code:   401,
+	}
+}
+
 func BadRequestResponses(data string) (result dto.JsonResponses) {
 	return dto.JsonResponses{
 		Status: data,

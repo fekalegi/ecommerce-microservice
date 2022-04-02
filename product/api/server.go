@@ -7,6 +7,7 @@ import (
 	"ecommerce-microservice/product/repository/postgres"
 	"ecommerce-microservice/product/usecase/category"
 	"ecommerce-microservice/product/usecase/product"
+	"ecommerce-microservice/product/usecase/wishlist"
 	"github.com/labstack/echo/v4"
 	echoSwagger "github.com/swaggo/echo-swagger"
 	"net/http"
@@ -39,10 +40,15 @@ func (server *Server) InitializeServer() {
 	productUC := product.NewProductService(repoProduct)
 	productController := controller.NewProductController(productUC)
 
+	repoWishlist := postgres.NewWishlistRepository(newDB)
+	wishlistUC := wishlist.NewWishlistRepository(repoWishlist)
+	wishlistController := controller.NewWishlistController(wishlistUC)
+
 	apiGroup := server.Route.Group("/api")
 
 	categoryController.Route(apiGroup)
 	productController.Route(apiGroup)
+	wishlistController.Route(apiGroup)
 
 	server.Route.GET("/swagger/*", echoSwagger.WrapHandler)
 

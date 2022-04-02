@@ -8,6 +8,12 @@ import (
 )
 
 func (i impl) UpdateCategoryCommand(id uuid.UUID, request dto.RequestUpdateCategory, userID int, levelUser int) (dto.JsonResponses, error) {
+	switch levelUser {
+	case 1, 2, 3:
+	default:
+		return command.UnauthorizedResponses("Unauthorized"), nil
+	}
+
 	current, err := i.repository.FetchCategoryByID(id)
 
 	if current == nil && err == nil {
@@ -17,8 +23,9 @@ func (i impl) UpdateCategoryCommand(id uuid.UUID, request dto.RequestUpdateCateg
 	}
 
 	category := domain.Category{
-		ID:   id,
-		Name: request.Name,
+		ID:         id,
+		Name:       request.Name,
+		AuditTable: domain.AuditTable{UpdatedBy: userID},
 	}
 
 	err = i.repository.UpdateCategory(id, category)

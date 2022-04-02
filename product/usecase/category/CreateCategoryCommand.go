@@ -7,7 +7,13 @@ import (
 )
 
 func (i impl) CreateCategoryCommand(request dto.RequestCategory, userID int, levelUser int) (dto.JsonResponses, error) {
-	unit := domain.Category{
+	switch levelUser {
+	case 1, 2, 3:
+	default:
+		return command.UnauthorizedResponses("Unauthorized"), nil
+	}
+
+	category := domain.Category{
 		ID:   request.ID,
 		Name: request.Name,
 	}
@@ -15,11 +21,13 @@ func (i impl) CreateCategoryCommand(request dto.RequestCategory, userID int, lev
 	current, err := i.repository.FetchCategoryByID(request.ID)
 
 	if current != nil && err == nil {
-		err = i.repository.UpdateCategory(request.ID, unit)
+		category.AuditTable = domain.AuditTable{UpdatedBy: userID}
+		err = i.repository.UpdateCategory(request.ID, category)
 	} else if err != nil {
 		return command.InternalServerResponses(""), err
 	} else {
-		err = i.repository.CreateCategory(unit)
+		category.AuditTable = domain.AuditTable{CreatedBy: userID}
+		err = i.repository.CreateCategory(category)
 	}
 
 	if err != nil {

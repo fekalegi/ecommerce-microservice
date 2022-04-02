@@ -7,6 +7,12 @@ import (
 )
 
 func (i impl) DeleteCategoryCommand(id uuid.UUID, userID int, levelUser int) (dto.JsonResponses, error) {
+	switch levelUser {
+	case 1, 2, 3:
+	default:
+		return command.UnauthorizedResponses("Unauthorized"), nil
+	}
+
 	current, err := i.repository.FetchCategoryByID(id)
 
 	if err == nil && current == nil {

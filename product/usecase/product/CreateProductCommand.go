@@ -7,7 +7,13 @@ import (
 )
 
 func (i impl) CreateProductCommand(request dto.RequestProduct, userID int, levelUser int) (dto.JsonResponses, error) {
-	unit := domain.Product{
+	switch levelUser {
+	case 1, 2, 3:
+	default:
+		return command.UnauthorizedResponses("Unauthorized"), nil
+	}
+
+	product := domain.Product{
 		ID:          request.ID,
 		Name:        request.Name,
 		Description: request.Description,
@@ -20,11 +26,13 @@ func (i impl) CreateProductCommand(request dto.RequestProduct, userID int, level
 	current, err := i.repository.FetchProductByID(request.ID)
 
 	if current != nil && err == nil {
-		err = i.repository.UpdateProduct(request.ID, unit)
+		product.AuditTable = domain.AuditTable{UpdatedBy: userID}
+		err = i.repository.UpdateProduct(request.ID, product)
 	} else if err != nil {
 		return command.InternalServerResponses(""), err
 	} else {
-		err = i.repository.CreateProduct(unit)
+		product.AuditTable = domain.AuditTable{CreatedBy: userID}
+		err = i.repository.CreateProduct(product)
 	}
 
 	if err != nil {

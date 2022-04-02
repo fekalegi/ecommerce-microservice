@@ -10,4 +10,6 @@ type Product struct {
 	Stock       int       `json:"stock"`
 	CategoryID  uuid.UUID `json:"category_id"`
 	UserID      int       `json:"user_id"`
+
+	AuditTable AuditTable `gorm:"embedded" json:"-"`
 }
