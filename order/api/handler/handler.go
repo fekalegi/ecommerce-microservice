@@ -1,7 +1,7 @@
 package handler
 
 import (
-	"ecommerce-microservice/product/common/exception"
+	"ecommerce-microservice/order/common/exception"
 	"fmt"
 	"github.com/go-playground/validator/v10"
 	"github.com/labstack/echo/v4"

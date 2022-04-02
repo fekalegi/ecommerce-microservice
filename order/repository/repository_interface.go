@@ -1,22 +1,27 @@
 package repository
 
 import (
-	"ecommerce-microservice/product/domain"
+	"ecommerce-microservice/order/domain"
 	"github.com/google/uuid"
 )
 
-type UserRepository interface {
-	CheckLogin(username string, password string) (*domain.User, error)
-	FindUserByID(id int) (*domain.User, error)
-	FindUserByIDAndAuthID(id int, authID uuid.UUID) (*domain.User, error)
-	AddUser(user domain.User) (*domain.User, error)
-	UpdateAuthUUID(id int, authID uuid.UUID) error
-}
+//go:generate mockgen -destination=../mocks/repository/mock_repository.go -package=mock_repository -source=repository_interface.go
 
-type NoteRepository interface {
-	CreateNote(note domain.Note) (*domain.Note, error)
-	FetchNoteByID(id int) (*domain.Note, error)
-	FetchAllNote() ([]domain.Note, error)
-	UpdateNote(note domain.Note) error
-	DeleteNote(id int) error
+type OrderRepository interface {
+	CreateOrder(order domain.Order) (*domain.Order, error)
+	CreateInitialOrder(order domain.Order, product domain.OrderProduct) error
+	CreateOrderProduct(product domain.OrderProduct) error
+	FindOrderProductByOrderIDAndProductID(orderID int64, productID uuid.UUID) (*domain.OrderProduct, error)
+	FetchAllOrderByUserID(userID, offset, limit, status int) ([]domain.Order, int64, error)
+	FetchOrderByID(id int64) (*domain.Order, error)
+	UpdateOrder(id int64, request domain.Order) error
+	UpdateOrderStatus(id int64, status int, history domain.OrderHistory) error
+	UpdateOrderProduct(id int64, product domain.OrderProduct) error
+	DeleteOrder(id int64) error
+	DeleteOrderProduct(id int64) error
+	FetchOrderProductID(orderProductID int64) (*domain.OrderProduct, error)
+	CreateRatingSeller(seller domain.SellerRating) error
+	UpdateRatingSeller(seller domain.SellerRating) error
+	FindRatingSellerBySellerID(sellerID int) (domain.SellerRating, error)
+	FindRatingSellerID(sellerID int) (*domain.SellerRating, error)
 }

@@ -20,7 +20,7 @@ func (i impl) FetchAllWishlistByUserID(request dto.RequestPagination, userID int
 
 	wishlists, totalData, err := i.repository.FetchAllWishlistByUserID(userID, offset, request.PageSize, request.Filter)
 	if err != nil {
-		return command.InternalServerPaginationResponses("Internal server error"), nil
+		return command.InternalServerPaginationResponses("Internal server error"), err
 	}
 
 	c := float64(totalData) / float64(request.PageSize)

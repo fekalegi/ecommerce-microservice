@@ -1,19 +1,13 @@
 package api
 
 import (
-	"ecommerce-microservice/product/api/controller"
-	"ecommerce-microservice/product/api/handler"
-	"ecommerce-microservice/product/common/helper"
-	external "ecommerce-microservice/product/infra"
-	"ecommerce-microservice/product/repository/postgres"
-	"ecommerce-microservice/product/usecase/note"
-	"ecommerce-microservice/product/usecase/user"
+	"ecommerce-microservice/order/api/handler"
 	"github.com/labstack/echo/v4"
 	echoSwagger "github.com/swaggo/echo-swagger"
 	"net/http"
 	"time"
 
-	_ "ecommerce-microservice/product/docs"
+	_ "ecommerce-microservice/order/docs"
 )
 
 // Server Struct
@@ -29,28 +23,23 @@ func NewServer(e *echo.Echo) *Server {
 }
 
 func (server *Server) InitializeServer() {
-	newDB := external.NewGormDB()
+	//
+	//newDB := external.NewGormDB()
 
-	helperInterface := helper.NewHelperFunction()
-	repoUser := postgres.NewUserRepository(newDB)
-	userUC := user.NewUserImplementation(repoUser, helperInterface)
-	userController := controller.NewUserController(userUC)
-
-	repoNote := postgres.NewNoteRepository(newDB)
-	noteUC := note.NewNoteImplementation(repoNote)
-	noteController := controller.NewNoteController(noteUC)
-
-	apiGroup := server.Route.Group("/api")
-
-	userController.Route(apiGroup)
-	noteController.Route(apiGroup)
+	//repoWishlist := postgres.NewWishlistRepository(newDB)
+	//wishlistUC := wishlist.NewWishlistRepository(repoWishlist)
+	//wishlistController := controller.NewWishlistController(wishlistUC)
+	//
+	//apiGroup := server.Route.Group("/api")
+	//
+	//wishlistController.Route(apiGroup)
 
 	server.Route.GET("/swagger/*", echoSwagger.WrapHandler)
 
 	handler.UseCustomValidatorHandler(server.Route)
 
 	serverConfiguration := &http.Server{
-		Addr:         ":5001",
+		Addr:         ":5002",
 		ReadTimeout:  20 * time.Minute,
 		WriteTimeout: 20 * time.Minute,
 	}

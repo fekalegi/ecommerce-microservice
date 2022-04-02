@@ -1,21 +1,21 @@
 package usecase
 
 import (
-	"ecommerce-microservice/product/common/dto"
-	"github.com/google/uuid"
+	"ecommerce-microservice/order/common/dto"
 )
 
-type UserService interface {
-	CheckLogin(username string, password string) (dto.JsonResponses, error)
-	AddUser(request dto.RequestAddUser) (dto.JsonResponses, error)
-	RefreshToken(userID int, authID uuid.UUID) (dto.JsonResponses, error)
-	DeleteAuth(userID int, authID uuid.UUID) (dto.JsonResponses, error)
-}
-
-type NoteService interface {
-	CreateNote(request dto.RequestNote, userID int) (dto.JsonResponses, error)
-	FetchNote(id int) (dto.JsonResponses, error)
-	FetchAllNote() (dto.JsonResponses, error)
-	UpdateNote(id int, userID int, request dto.RequestNote) (dto.JsonResponses, error)
-	DeleteNote(id int, userID int) (dto.JsonResponses, error)
+type OrderService interface {
+	CreateInitialOrderCommand(request dto.RequestInitialOrder, userID int, level int) (dto.JsonResponses, error)
+	AddOrUpdateOrderProductsCommand(request dto.RequestOrderProduct, orderID int64, userID int) (dto.JsonResponses, error)
+	DeleteOrderCommand(orderID int64, userID int, levelUser int) (dto.JsonResponses, error)
+	DeleteOrderProductCommand(orderProductID int64, userID int, levelUser int) (dto.JsonResponses, error)
+	FetchAllOrderQuery(request dto.RequestFetchOrderByStatus, userID int, levelUser int) (dto.JsonResponsesPagination, error)
+	FetchOrderQuery(id int64, userID int, levelUser int) (dto.JsonResponses, error)
+	UpdateStatusOrderToWaitForPayment(orderID int64, userID int, levelUser int) (dto.JsonResponses, error)
+	UpdateStatusOrderToPackingItems(orderID int64, userID int, levelUser int) (dto.JsonResponses, error)
+	UpdateStatusOrderToItemsBeingShipped(orderID int64, userID int, levelUser int) (dto.JsonResponses, error)
+	UpdateStatusOrderToItemsHaveArrived(orderID int64, userID int, levelUser int) (dto.JsonResponses, error)
+	UpdateStatusOrderToFinished(orderID int64, userID int, levelUser int) (dto.JsonResponses, error)
+	AddRatingSeller(request dto.RequestRatingSeller, userID int, sellerID int, orderID int64) (dto.JsonResponses, error)
+	FetchRatingSellerBySellerID(sellerID int) (dto.JsonResponses, error)
 }

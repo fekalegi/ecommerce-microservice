@@ -1,6 +1,6 @@
 package command
 
-import "ecommerce-microservice/product/common/dto"
+import "ecommerce-microservice/order/common/dto"
 
 func SuccessResponses(data interface{}) (result dto.JsonResponses) {
 	return dto.JsonResponses{
@@ -15,6 +15,14 @@ func NotFoundResponses(status interface{}) (result dto.JsonResponses) {
 		Status: status,
 		Data:   nil,
 		Code:   404,
+	}
+}
+
+func UnauthorizedResponses(status interface{}) (result dto.JsonResponses) {
+	return dto.JsonResponses{
+		Status: status,
+		Data:   nil,
+		Code:   401,
 	}
 }
 
@@ -65,6 +73,15 @@ func BadRequestPaginationResponses(data string) (result dto.JsonResponsesPaginat
 	return dto.JsonResponsesPagination{
 		Status: data,
 		Code:   400,
+		Data:   nil,
+		Meta:   dto.Meta{},
+	}
+}
+
+func UnauthorizedPaginationResponses(data string) (result dto.JsonResponsesPagination) {
+	return dto.JsonResponsesPagination{
+		Status: data,
+		Code:   500,
 		Data:   nil,
 		Meta:   dto.Meta{},
 	}
