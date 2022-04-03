@@ -13,13 +13,15 @@ func (i impl) CreateInitialOrderCommand(request dto.RequestInitialOrder, userID 
 		return command.UnauthorizedResponses("Unauthorized"), nil
 	}
 
+	TotalPrice := request.Products.Price * request.Products.Quantity
+
 	order := domain.Order{
 		UserID:     userID,
 		SellerID:   request.SellerID,
+		TotalOrder: TotalPrice,
+		Status:     1,
 		AuditTable: domain.AuditTable{CreatedBy: userID},
 	}
-
-	TotalPrice := request.Products.Price * request.Products.Quantity
 
 	product := domain.OrderProduct{
 		ProductID:  request.Products.ProductID,

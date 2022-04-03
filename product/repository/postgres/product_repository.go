@@ -16,6 +16,23 @@ func NewProductRepository(db *gorm.DB) repository.ProductRepository {
 	return productRepo{db}
 }
 
+func (u productRepo) DecreaseStockProduct(id uuid.UUID, quantity float64) error {
+	err := u.db.Model(&domain.Product{}).Where("id = ?", id).
+		UpdateColumn("stock", gorm.Expr("stock - ?", quantity)).Error
+	if err != nil {
+		return err
+	}
+	return err
+}
+
+func (u productRepo) CreateProductTransactionHistory(history domain.ProductTransactionHistory) error {
+	err := u.db.Create(&history).Error
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
 func (u productRepo) CreateProduct(product domain.Product) error {
 	err := u.db.Create(&product).Error
 	if err != nil {

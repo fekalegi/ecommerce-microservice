@@ -3,8 +3,7 @@ package dto
 import "github.com/google/uuid"
 
 type RequestInitialOrder struct {
-	SellerID   int     `json:"seller_id"`
-	TotalOrder float64 `json:"total_order"`
+	SellerID int `json:"seller_id"`
 
 	Products RequestOrderProduct `json:"products"`
 }

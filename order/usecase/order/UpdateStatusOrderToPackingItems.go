@@ -4,6 +4,7 @@ import (
 	"ecommerce-microservice/order/common/command"
 	"ecommerce-microservice/order/common/dto"
 	"ecommerce-microservice/order/domain"
+	"log"
 	"time"
 )
 
@@ -14,6 +15,13 @@ func (i impl) UpdateStatusOrderToPackingItems(orderID int64, userID int, levelUs
 	} else if err != nil {
 		return command.InternalServerResponses("Internal Server Error"), err
 	}
+	switch order.Status {
+	case 1, 3, 4, 5, 6:
+		return command.BadRequestResponses("Status order is not valid, status should be 2"), nil
+	case 2:
+	default:
+		return command.BadRequestResponses("Status order invalid"), nil
+	}
 
 	switch levelUser {
 	case 1, 2:
@@ -23,6 +31,21 @@ func (i impl) UpdateStatusOrderToPackingItems(orderID int64, userID int, levelUs
 		}
 	default:
 		return command.UnauthorizedResponses("Unauthorized"), nil
+	}
+
+	for _, v := range order.Products {
+		msg := dto.KafkaProduceOrderData{
+			OrderID:    order.ID,
+			SellerID:   order.SellerID,
+			ProductID:  v.ProductID,
+			Quantity:   v.Quantity,
+			Price:      v.Price,
+			TotalPrice: v.TotalPrice,
+		}
+		errProduce := i.producer.ProduceMessage(msg)
+		if errProduce != nil {
+			log.Println(errProduce)
+		}
 	}
 
 	history := domain.OrderHistory{

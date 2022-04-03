@@ -211,6 +211,20 @@ func (mr *MockOrderRepositoryMockRecorder) FindRatingSellerID(sellerID interface
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "FindRatingSellerID", reflect.TypeOf((*MockOrderRepository)(nil).FindRatingSellerID), sellerID)
 }
 
+// UpdateCancelOrder mocks base method.
+func (m *MockOrderRepository) UpdateCancelOrder(id int64, reason int) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "UpdateCancelOrder", id, reason)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// UpdateCancelOrder indicates an expected call of UpdateCancelOrder.
+func (mr *MockOrderRepositoryMockRecorder) UpdateCancelOrder(id, reason interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdateCancelOrder", reflect.TypeOf((*MockOrderRepository)(nil).UpdateCancelOrder), id, reason)
+}
+
 // UpdateOrder mocks base method.
 func (m *MockOrderRepository) UpdateOrder(id int64, request domain.Order) error {
 	m.ctrl.T.Helper()

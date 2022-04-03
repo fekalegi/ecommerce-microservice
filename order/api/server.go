@@ -1,7 +1,13 @@
 package api
 
 import (
+	"ecommerce-microservice/order/api/controller"
 	"ecommerce-microservice/order/api/handler"
+	"ecommerce-microservice/order/common/command"
+	external "ecommerce-microservice/order/infra"
+	"ecommerce-microservice/order/infra/messaging"
+	"ecommerce-microservice/order/repository/postgres"
+	"ecommerce-microservice/order/usecase/order"
 	"github.com/labstack/echo/v4"
 	echoSwagger "github.com/swaggo/echo-swagger"
 	"net/http"
@@ -23,23 +29,26 @@ func NewServer(e *echo.Echo) *Server {
 }
 
 func (server *Server) InitializeServer() {
-	//
-	//newDB := external.NewGormDB()
 
-	//repoWishlist := postgres.NewWishlistRepository(newDB)
-	//wishlistUC := wishlist.NewWishlistRepository(repoWishlist)
-	//wishlistController := controller.NewWishlistController(wishlistUC)
-	//
-	//apiGroup := server.Route.Group("/api")
-	//
-	//wishlistController.Route(apiGroup)
+	kafkaCredentials := command.GetKafkaCredentials()
+	producerService, _ := messaging.NewProducer(kafkaCredentials)
+
+	newDB := external.NewGormDB()
+
+	repoOrder := postgres.NewOrderRepository(newDB)
+	orderUC := order.NewOrderService(repoOrder, producerService)
+	orderController := controller.NewOrderController(orderUC)
+
+	apiGroup := server.Route.Group("/api")
+
+	orderController.Route(apiGroup)
 
 	server.Route.GET("/swagger/*", echoSwagger.WrapHandler)
 
 	handler.UseCustomValidatorHandler(server.Route)
 
 	serverConfiguration := &http.Server{
-		Addr:         ":5002",
+		Addr:         ":5001",
 		ReadTimeout:  20 * time.Minute,
 		WriteTimeout: 20 * time.Minute,
 	}

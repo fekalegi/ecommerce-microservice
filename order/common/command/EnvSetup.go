@@ -1,6 +1,7 @@
 package command
 
 import (
+	"ecommerce-microservice/order/infra/messaging"
 	"gorm.io/driver/postgres"
 	"os"
 	"strings"
@@ -41,4 +42,13 @@ func PostgreConfig() postgres.Config {
 	}
 
 	return configPostgre
+}
+
+func GetKafkaCredentials() messaging.KafkaCredentials {
+	brokerURL := os.Getenv("BROKER_URL")
+	arr := strings.Split(brokerURL, ",")
+	return messaging.KafkaCredentials{
+		Topic:  os.Getenv("TOPIC_NAME"),
+		Broker: arr,
+	}
 }

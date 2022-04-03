@@ -16,6 +16,14 @@ func NewOrderRepository(db *gorm.DB) repository.OrderRepository {
 	return orderRepo{db}
 }
 
+func (u orderRepo) UpdateCancelOrder(id int64, reason int) error {
+	err := u.db.Model(&domain.Order{}).Where("id = ? ", id).Updates(map[string]interface{}{"is_canceled": true, "cancellation_status": reason}).Error
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
 func (u orderRepo) FindRatingSellerID(sellerID int) (*domain.SellerRating, error) {
 	var sellerRating domain.SellerRating
 	err := u.db.First(&sellerRating, sellerID).Error
@@ -172,7 +180,7 @@ func (u orderRepo) FetchAllOrderByUserID(userID, offset, limit, status int) ([]d
 
 func (u orderRepo) FetchOrderByID(id int64) (*domain.Order, error) {
 	var order domain.Order
-	err := u.db.First(&order, id).Error
+	err := u.db.Preload("Products").First(&order, id).Error
 	if err != nil && errors.Is(err, gorm.ErrRecordNotFound) {
 		return nil, nil
 	} else if err != nil {

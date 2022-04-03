@@ -4,6 +4,7 @@ import (
 	"ecommerce-microservice/order/common/dto"
 	"ecommerce-microservice/order/domain"
 	mock_repository "ecommerce-microservice/order/mocks/repository"
+	mock_service "ecommerce-microservice/order/mocks/services"
 	"ecommerce-microservice/order/usecase"
 	"ecommerce-microservice/order/usecase/order"
 	"errors"
@@ -20,6 +21,7 @@ var _ = Describe("OrderCategory", func() {
 		mockCtrl   *gomock.Controller
 		orderUC    usecase.OrderService
 		repo       *mock_repository.MockOrderRepository
+		producer   *mock_service.MockProducerService
 		mockOrder  domain.Order
 		mockOrders []domain.Order
 		mockUID    uuid.UUID
@@ -30,7 +32,7 @@ var _ = Describe("OrderCategory", func() {
 		mockCtrl = gomock.NewController(GinkgoT())
 		mockCtrl.Finish()
 		repo = mock_repository.NewMockOrderRepository(mockCtrl)
-		orderUC = order.NewOrderService(repo)
+		orderUC = order.NewOrderService(repo, producer)
 		mockUID, _ = uuid.Parse("73932cef-90ee-4299-9fa0-5b5c0326e4a3")
 
 		mockOrder = domain.Order{
@@ -107,8 +109,7 @@ var _ = Describe("OrderCategory", func() {
 	Describe("CreateInitialOrderCommand", func() {
 		It("return succeed", func() {
 			request := dto.RequestInitialOrder{
-				SellerID:   1,
-				TotalOrder: 1,
+				SellerID: 1,
 				Products: dto.RequestOrderProduct{
 					ProductID: mockUID,
 					Quantity:  2,
@@ -122,8 +123,7 @@ var _ = Describe("OrderCategory", func() {
 
 		It("return error", func() {
 			request := dto.RequestInitialOrder{
-				SellerID:   1,
-				TotalOrder: 1,
+				SellerID: 1,
 				Products: dto.RequestOrderProduct{
 					ProductID: mockUID,
 					Quantity:  2,
@@ -450,48 +450,9 @@ var _ = Describe("OrderCategory", func() {
 		})
 	})
 
-	Describe("UpdateStatusOrderToPackingItems", func() {
-		It("return success", func() {
-			repo.EXPECT().FetchOrderByID(gomock.Any()).Return(&mockOrder, nil)
-			repo.EXPECT().UpdateOrderStatus(gomock.Any(), gomock.Any(), gomock.Any()).Return(nil)
-			resp, err := orderUC.UpdateStatusOrderToPackingItems(1, 1, 1)
-			Expect(err).Should(Succeed())
-			Expect(resp.Code).Should(Equal(200))
-		})
-
-		It("return unauthorized User not the one order", func() {
-			repo.EXPECT().FetchOrderByID(gomock.Any()).Return(&mockOrder, nil)
-			repo.EXPECT().UpdateOrderStatus(gomock.Any(), gomock.Any(), gomock.Any()).Return(nil)
-			resp, err := orderUC.UpdateStatusOrderToPackingItems(1, 3, 4)
-			Expect(err).Should(Succeed())
-			Expect(resp.Code).Should(Equal(401))
-		})
-
-		It("return unauthorized", func() {
-			repo.EXPECT().FetchOrderByID(gomock.Any()).Return(&mockOrder, nil)
-			repo.EXPECT().UpdateOrderStatus(gomock.Any(), gomock.Any(), gomock.Any()).Return(nil)
-			resp, err := orderUC.UpdateStatusOrderToPackingItems(1, 3, 5)
-			Expect(err).Should(Succeed())
-			Expect(resp.Code).Should(Equal(401))
-		})
-
-		It("return error on FetchOrderByID", func() {
-			repo.EXPECT().FetchOrderByID(gomock.Any()).Return(nil, errSomething)
-			repo.EXPECT().UpdateOrderStatus(gomock.Any(), gomock.Any(), gomock.Any()).Return(nil)
-			_, err := orderUC.UpdateStatusOrderToPackingItems(1, 1, 1)
-			Expect(err).Should(HaveOccurred())
-		})
-
-		It("return error on UpdateOrderStatus", func() {
-			repo.EXPECT().FetchOrderByID(gomock.Any()).Return(&mockOrder, nil)
-			repo.EXPECT().UpdateOrderStatus(gomock.Any(), gomock.Any(), gomock.Any()).Return(errSomething)
-			_, err := orderUC.UpdateStatusOrderToPackingItems(1, 1, 1)
-			Expect(err).Should(HaveOccurred())
-		})
-	})
-
 	Describe("UpdateStatusOrderToItemsBeingShipped", func() {
 		It("return success", func() {
+			mockOrder.Status = 3
 			repo.EXPECT().FetchOrderByID(gomock.Any()).Return(&mockOrder, nil)
 			repo.EXPECT().UpdateOrderStatus(gomock.Any(), gomock.Any(), gomock.Any()).Return(nil)
 			resp, err := orderUC.UpdateStatusOrderToItemsBeingShipped(1, 1, 1)
@@ -500,17 +461,19 @@ var _ = Describe("OrderCategory", func() {
 		})
 
 		It("return unauthorized User not the one order", func() {
+			mockOrder.Status = 3
 			repo.EXPECT().FetchOrderByID(gomock.Any()).Return(&mockOrder, nil)
 			repo.EXPECT().UpdateOrderStatus(gomock.Any(), gomock.Any(), gomock.Any()).Return(nil)
-			resp, err := orderUC.UpdateStatusOrderToItemsBeingShipped(1, 3, 4)
+			resp, err := orderUC.UpdateStatusOrderToItemsBeingShipped(1, 4, 4)
 			Expect(err).Should(Succeed())
 			Expect(resp.Code).Should(Equal(401))
 		})
 
 		It("return unauthorized", func() {
+			mockOrder.Status = 3
 			repo.EXPECT().FetchOrderByID(gomock.Any()).Return(&mockOrder, nil)
 			repo.EXPECT().UpdateOrderStatus(gomock.Any(), gomock.Any(), gomock.Any()).Return(nil)
-			resp, err := orderUC.UpdateStatusOrderToItemsBeingShipped(1, 3, 5)
+			resp, err := orderUC.UpdateStatusOrderToItemsBeingShipped(1, 4, 5)
 			Expect(err).Should(Succeed())
 			Expect(resp.Code).Should(Equal(401))
 		})
@@ -523,6 +486,7 @@ var _ = Describe("OrderCategory", func() {
 		})
 
 		It("return error on UpdateOrderStatus", func() {
+			mockOrder.Status = 3
 			repo.EXPECT().FetchOrderByID(gomock.Any()).Return(&mockOrder, nil)
 			repo.EXPECT().UpdateOrderStatus(gomock.Any(), gomock.Any(), gomock.Any()).Return(errSomething)
 			_, err := orderUC.UpdateStatusOrderToItemsBeingShipped(1, 1, 1)
@@ -532,6 +496,7 @@ var _ = Describe("OrderCategory", func() {
 
 	Describe("UpdateStatusOrderToItemsHaveArrived", func() {
 		It("return success", func() {
+			mockOrder.Status = 4
 			repo.EXPECT().FetchOrderByID(gomock.Any()).Return(&mockOrder, nil)
 			repo.EXPECT().UpdateOrderStatus(gomock.Any(), gomock.Any(), gomock.Any()).Return(nil)
 			resp, err := orderUC.UpdateStatusOrderToItemsHaveArrived(1, 1, 1)
@@ -540,6 +505,7 @@ var _ = Describe("OrderCategory", func() {
 		})
 
 		It("return unauthorized User not the one order", func() {
+			mockOrder.Status = 4
 			repo.EXPECT().FetchOrderByID(gomock.Any()).Return(&mockOrder, nil)
 			repo.EXPECT().UpdateOrderStatus(gomock.Any(), gomock.Any(), gomock.Any()).Return(nil)
 			resp, err := orderUC.UpdateStatusOrderToItemsHaveArrived(1, 3, 4)
@@ -548,6 +514,7 @@ var _ = Describe("OrderCategory", func() {
 		})
 
 		It("return unauthorized", func() {
+			mockOrder.Status = 4
 			repo.EXPECT().FetchOrderByID(gomock.Any()).Return(&mockOrder, nil)
 			repo.EXPECT().UpdateOrderStatus(gomock.Any(), gomock.Any(), gomock.Any()).Return(nil)
 			resp, err := orderUC.UpdateStatusOrderToItemsHaveArrived(1, 3, 5)
@@ -563,6 +530,7 @@ var _ = Describe("OrderCategory", func() {
 		})
 
 		It("return error on UpdateOrderStatus", func() {
+			mockOrder.Status = 4
 			repo.EXPECT().FetchOrderByID(gomock.Any()).Return(&mockOrder, nil)
 			repo.EXPECT().UpdateOrderStatus(gomock.Any(), gomock.Any(), gomock.Any()).Return(errSomething)
 			_, err := orderUC.UpdateStatusOrderToItemsHaveArrived(1, 1, 1)
@@ -572,6 +540,7 @@ var _ = Describe("OrderCategory", func() {
 
 	Describe("UpdateStatusOrderToFinished", func() {
 		It("return success", func() {
+			mockOrder.Status = 5
 			repo.EXPECT().FetchOrderByID(gomock.Any()).Return(&mockOrder, nil)
 			repo.EXPECT().UpdateOrderStatus(gomock.Any(), gomock.Any(), gomock.Any()).Return(nil)
 			resp, err := orderUC.UpdateStatusOrderToFinished(1, 1, 1)
@@ -580,6 +549,7 @@ var _ = Describe("OrderCategory", func() {
 		})
 
 		It("return unauthorized User not the one order", func() {
+			mockOrder.Status = 5
 			repo.EXPECT().FetchOrderByID(gomock.Any()).Return(&mockOrder, nil)
 			repo.EXPECT().UpdateOrderStatus(gomock.Any(), gomock.Any(), gomock.Any()).Return(nil)
 			resp, err := orderUC.UpdateStatusOrderToFinished(1, 3, 4)
@@ -588,6 +558,7 @@ var _ = Describe("OrderCategory", func() {
 		})
 
 		It("return unauthorized", func() {
+			mockOrder.Status = 5
 			repo.EXPECT().FetchOrderByID(gomock.Any()).Return(&mockOrder, nil)
 			repo.EXPECT().UpdateOrderStatus(gomock.Any(), gomock.Any(), gomock.Any()).Return(nil)
 			resp, err := orderUC.UpdateStatusOrderToFinished(1, 3, 5)
@@ -596,6 +567,7 @@ var _ = Describe("OrderCategory", func() {
 		})
 
 		It("return error on FetchOrderByID", func() {
+			mockOrder.Status = 5
 			repo.EXPECT().FetchOrderByID(gomock.Any()).Return(nil, errSomething)
 			repo.EXPECT().UpdateOrderStatus(gomock.Any(), gomock.Any(), gomock.Any()).Return(nil)
 			_, err := orderUC.UpdateStatusOrderToFinished(1, 1, 1)
@@ -603,6 +575,7 @@ var _ = Describe("OrderCategory", func() {
 		})
 
 		It("return error on UpdateOrderStatus", func() {
+			mockOrder.Status = 5
 			repo.EXPECT().FetchOrderByID(gomock.Any()).Return(&mockOrder, nil)
 			repo.EXPECT().UpdateOrderStatus(gomock.Any(), gomock.Any(), gomock.Any()).Return(errSomething)
 			_, err := orderUC.UpdateStatusOrderToFinished(1, 1, 1)
@@ -616,7 +589,7 @@ var _ = Describe("OrderCategory", func() {
 			repo.EXPECT().FetchOrderByID(gomock.Any()).Return(&mockOrder, nil)
 			repo.EXPECT().FindRatingSellerBySellerID(gomock.Any()).Return(domain.SellerRating{}, nil)
 			repo.EXPECT().CreateRatingSeller(gomock.Any()).Return(nil)
-			resp, err := orderUC.AddRatingSeller(mockRequest, 1, 1, 1)
+			resp, err := orderUC.AddRatingSeller(mockRequest, 1, 1)
 			Expect(err).Should(Succeed())
 			Expect(resp.Code).Should(Equal(200))
 		})
@@ -625,7 +598,7 @@ var _ = Describe("OrderCategory", func() {
 			repo.EXPECT().FetchOrderByID(gomock.Any()).Return(&mockOrder, nil)
 			repo.EXPECT().FindRatingSellerBySellerID(gomock.Any()).Return(mockRating, nil)
 			repo.EXPECT().UpdateRatingSeller(gomock.Any()).Return(nil)
-			resp, err := orderUC.AddRatingSeller(mockRequest, 1, 1, 1)
+			resp, err := orderUC.AddRatingSeller(mockRequest, 1, 1)
 			Expect(err).Should(Succeed())
 			Expect(resp.Code).Should(Equal(200))
 		})
@@ -634,7 +607,7 @@ var _ = Describe("OrderCategory", func() {
 			repo.EXPECT().FetchOrderByID(gomock.Any()).Return(nil, errSomething)
 			repo.EXPECT().FindRatingSellerBySellerID(gomock.Any()).Return(domain.SellerRating{}, errSomething)
 			repo.EXPECT().CreateRatingSeller(gomock.Any()).Return(nil)
-			_, err := orderUC.AddRatingSeller(mockRequest, 1, 1, 1)
+			_, err := orderUC.AddRatingSeller(mockRequest, 1, 1)
 			Expect(err).Should(HaveOccurred())
 		})
 
@@ -642,7 +615,7 @@ var _ = Describe("OrderCategory", func() {
 			repo.EXPECT().FetchOrderByID(gomock.Any()).Return(&mockOrder, nil)
 			repo.EXPECT().FindRatingSellerBySellerID(gomock.Any()).Return(domain.SellerRating{}, errSomething)
 			repo.EXPECT().CreateRatingSeller(gomock.Any()).Return(nil)
-			_, err := orderUC.AddRatingSeller(mockRequest, 1, 1, 1)
+			_, err := orderUC.AddRatingSeller(mockRequest, 1, 1)
 			Expect(err).Should(HaveOccurred())
 		})
 
@@ -650,7 +623,7 @@ var _ = Describe("OrderCategory", func() {
 			repo.EXPECT().FetchOrderByID(gomock.Any()).Return(&mockOrder, nil)
 			repo.EXPECT().FindRatingSellerBySellerID(gomock.Any()).Return(domain.SellerRating{}, nil)
 			repo.EXPECT().CreateRatingSeller(gomock.Any()).Return(errSomething)
-			_, err := orderUC.AddRatingSeller(mockRequest, 1, 1, 1)
+			_, err := orderUC.AddRatingSeller(mockRequest, 1, 1)
 			Expect(err).Should(HaveOccurred())
 		})
 
@@ -658,7 +631,7 @@ var _ = Describe("OrderCategory", func() {
 			repo.EXPECT().FetchOrderByID(gomock.Any()).Return(&mockOrder, nil)
 			repo.EXPECT().FindRatingSellerBySellerID(gomock.Any()).Return(mockRating, nil)
 			repo.EXPECT().UpdateRatingSeller(gomock.Any()).Return(errSomething)
-			_, err := orderUC.AddRatingSeller(mockRequest, 1, 1, 1)
+			_, err := orderUC.AddRatingSeller(mockRequest, 1, 1)
 			Expect(err).Should(HaveOccurred())
 		})
 

@@ -2,10 +2,10 @@ package middlewares
 
 import (
 	"ecommerce-microservice/user/common/exception"
-	"ecommerce-microservice/user/common/helper"
 	external "ecommerce-microservice/user/infra"
 	"ecommerce-microservice/user/repository/postgres"
 	"errors"
+	"github.com/fekalegi/custom-package/authentications/middlewares/common/helper"
 	"github.com/google/uuid"
 	"github.com/labstack/echo/v4"
 	"strconv"

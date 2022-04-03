@@ -13,6 +13,8 @@ type ProductRepository interface {
 	FetchProductByID(id uuid.UUID) (*domain.Product, error)
 	UpdateProduct(id uuid.UUID, request domain.Product) error
 	DeleteProduct(id uuid.UUID) error
+	CreateProductTransactionHistory(history domain.ProductTransactionHistory) error
+	DecreaseStockProduct(id uuid.UUID, quantity float64) error
 }
 
 type CategoryRepository interface {

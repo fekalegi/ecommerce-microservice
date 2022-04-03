@@ -49,6 +49,20 @@ func (mr *MockProductRepositoryMockRecorder) CreateProduct(product interface{}) 
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreateProduct", reflect.TypeOf((*MockProductRepository)(nil).CreateProduct), product)
 }
 
+// CreateProductTransactionHistory mocks base method.
+func (m *MockProductRepository) CreateProductTransactionHistory(history domain.ProductTransactionHistory) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "CreateProductTransactionHistory", history)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// CreateProductTransactionHistory indicates an expected call of CreateProductTransactionHistory.
+func (mr *MockProductRepositoryMockRecorder) CreateProductTransactionHistory(history interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreateProductTransactionHistory", reflect.TypeOf((*MockProductRepository)(nil).CreateProductTransactionHistory), history)
+}
+
 // DeleteProduct mocks base method.
 func (m *MockProductRepository) DeleteProduct(id uuid.UUID) error {
 	m.ctrl.T.Helper()

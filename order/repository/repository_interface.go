@@ -24,4 +24,5 @@ type OrderRepository interface {
 	UpdateRatingSeller(seller domain.SellerRating) error
 	FindRatingSellerBySellerID(sellerID int) (domain.SellerRating, error)
 	FindRatingSellerID(sellerID int) (*domain.SellerRating, error)
+	UpdateCancelOrder(id int64, reason int) error
 }

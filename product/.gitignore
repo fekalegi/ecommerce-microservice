@@ -5,7 +5,7 @@
 *.so
 *.dylib
 
-local.env
+
 # Test binary, built with `go test -c`
 *.test
 

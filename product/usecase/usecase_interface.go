@@ -2,6 +2,7 @@ package usecase
 
 import (
 	"ecommerce-microservice/product/common/dto"
+	"ecommerce-microservice/product/domain"
 	"github.com/google/uuid"
 )
 
@@ -11,6 +12,7 @@ type ProductService interface {
 	FetchProductQuery(id uuid.UUID) (dto.JsonResponses, error)
 	UpdateProductCommand(id uuid.UUID, request dto.RequestUpdateProduct, userID int, level int) (dto.JsonResponses, error)
 	DeleteProductCommand(id uuid.UUID, userID int, level int) (dto.JsonResponses, error)
+	CreateProductTransactionHistory(request domain.ProductTransactionHistory) error
 }
 
 type CategoryService interface {

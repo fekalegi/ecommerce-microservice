@@ -15,6 +15,14 @@ func (i impl) UpdateStatusOrderToWaitForPayment(orderID int64, userID int, level
 		return command.InternalServerResponses("Internal Server Error"), err
 	}
 
+	switch order.Status {
+	case 2, 3, 4, 5, 6:
+		return command.BadRequestResponses("Status order is not valid, status should be 1"), nil
+	case 1:
+	default:
+		return command.BadRequestResponses("Status order invalid"), nil
+	}
+
 	switch levelUser {
 	case 1, 2:
 	case 3, 4:

@@ -14,6 +14,13 @@ func (i impl) UpdateStatusOrderToItemsHaveArrived(orderID int64, userID int, lev
 	} else if err != nil {
 		return command.InternalServerResponses("Internal Server Error"), err
 	}
+	switch order.Status {
+	case 1, 2, 3, 5, 6:
+		return command.BadRequestResponses("Status order is not valid, status should be 1"), nil
+	case 4:
+	default:
+		return command.BadRequestResponses("Status order invalid"), nil
+	}
 
 	switch levelUser {
 	case 1, 2:

@@ -3,7 +3,9 @@ package api
 import (
 	"ecommerce-microservice/product/api/controller"
 	"ecommerce-microservice/product/api/handler"
+	"ecommerce-microservice/product/common/models"
 	external "ecommerce-microservice/product/infra"
+	backgrounds "ecommerce-microservice/product/infra/background"
 	"ecommerce-microservice/product/repository/postgres"
 	"ecommerce-microservice/product/usecase/category"
 	"ecommerce-microservice/product/usecase/product"
@@ -11,6 +13,8 @@ import (
 	"github.com/labstack/echo/v4"
 	echoSwagger "github.com/swaggo/echo-swagger"
 	"net/http"
+	"os"
+	"strings"
 	"time"
 
 	_ "ecommerce-microservice/product/docs"
@@ -59,6 +63,13 @@ func (server *Server) InitializeServer() {
 		ReadTimeout:  20 * time.Minute,
 		WriteTimeout: 20 * time.Minute,
 	}
+
+	kafkaHost := os.Getenv("ORDER_BROKER")
+	arr := strings.Split(kafkaHost, ",")
+	chanOrderHandler := make(chan models.KafkaNewOrderEventDto, 1000)
+	chanNotif := make(chan models.KafkaNewOrderEventDto, 1000)
+	go backgrounds.StartConsumerOrder(arr, os.Getenv("KAFKA_ORDER_TOPIC"), chanOrderHandler, chanNotif)
+	go backgrounds.StartConsumerOrderHandler(chanNotif, productUC)
 
 	server.Route.Logger.Fatal(server.Route.StartServer(serverConfiguration))
 

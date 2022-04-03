@@ -16,6 +16,7 @@ type OrderService interface {
 	UpdateStatusOrderToItemsBeingShipped(orderID int64, userID int, levelUser int) (dto.JsonResponses, error)
 	UpdateStatusOrderToItemsHaveArrived(orderID int64, userID int, levelUser int) (dto.JsonResponses, error)
 	UpdateStatusOrderToFinished(orderID int64, userID int, levelUser int) (dto.JsonResponses, error)
-	AddRatingSeller(request dto.RequestRatingSeller, userID int, sellerID int, orderID int64) (dto.JsonResponses, error)
+	AddRatingSeller(request dto.RequestRatingSeller, userID int, orderID int64) (dto.JsonResponses, error)
 	FetchRatingSellerBySellerID(sellerID int) (dto.JsonResponses, error)
+	CancelOrder(id int64, userID int, levelUser int) (dto.JsonResponses, error)
 }

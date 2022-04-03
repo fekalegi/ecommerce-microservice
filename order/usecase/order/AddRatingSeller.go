@@ -5,7 +5,7 @@ import (
 	"ecommerce-microservice/order/common/dto"
 )
 
-func (i impl) AddRatingSeller(request dto.RequestRatingSeller, userID int, sellerID int, orderID int64) (dto.JsonResponses, error) {
+func (i impl) AddRatingSeller(request dto.RequestRatingSeller, userID int, orderID int64) (dto.JsonResponses, error) {
 
 	order, err := i.repository.FetchOrderByID(orderID)
 	if order == nil && err == nil {
@@ -14,7 +14,7 @@ func (i impl) AddRatingSeller(request dto.RequestRatingSeller, userID int, selle
 		return command.InternalServerResponses("Internal server error"), err
 	}
 
-	sellerRating, err := i.repository.FindRatingSellerBySellerID(sellerID)
+	sellerRating, err := i.repository.FindRatingSellerBySellerID(order.SellerID)
 
 	switch request.Rating {
 	case 1:
