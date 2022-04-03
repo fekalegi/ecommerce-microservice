@@ -16,9 +16,9 @@
     },
     "basePath": "/api",
     "paths": {
-        "/notes": {
+        "/order": {
             "get": {
-                "description": "This endpoint for fetch all product category",
+                "description": "This endpoint for fetch all order",
                 "consumes": [
                     "application/json"
                 ],
@@ -26,9 +26,26 @@
                     "application/json"
                 ],
                 "tags": [
-                    "Note"
+                    "Order"
                 ],
-                "summary": "Fetch All Note",
+                "summary": "Fetch All Order",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "name": "page_number",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "name": "page_size",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "name": "status",
+                        "in": "query"
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "desc",
@@ -43,7 +60,7 @@
                                         "data": {
                                             "type": "array",
                                             "items": {
-                                                "$ref": "#/definitions/domain.Note"
+                                                "$ref": "#/definitions/domain.Order"
                                             }
                                         }
                                     }
@@ -52,11 +69,9 @@
                         }
                     }
                 }
-            }
-        },
-        "/notes/": {
+            },
             "post": {
-                "description": "This endpoint for create new Note",
+                "description": "This endpoint for CreateInitialOrder",
                 "consumes": [
                     "application/json"
                 ],
@@ -64,126 +79,40 @@
                     "application/json"
                 ],
                 "tags": [
-                    "Note"
+                    "Order"
                 ],
-                "summary": "Create New Note",
+                "summary": "CreateInitialOrder New Order",
                 "parameters": [
                     {
-                        "description": "Create new note",
+                        "description": "Create new order",
                         "name": "services",
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/dto.RequestNote"
+                            "$ref": "#/definitions/dto.RequestInitialOrder"
                         }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/models.JSONResponsesSwaggerSucceed"
-                        }
-                    }
-                }
-            }
-        },
-        "/notes/{id}": {
-            "get": {
-                "description": "This endpoint for fetch product category by ID",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Note"
-                ],
-                "summary": "Fetch Note by ID",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "Note ID",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "desc",
-                        "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/models.JSONResponsesSwaggerSucceed"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "data": {
-                                            "$ref": "#/definitions/domain.Note"
-                                        }
-                                    }
-                                }
-                            ]
-                        }
-                    }
-                }
-            },
-            "put": {
-                "description": "This endpoint for Update product category by ID",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Note"
-                ],
-                "summary": "Update Note by ID",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "Note ID",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
                     },
                     {
-                        "description": "Create new note",
-                        "name": "services",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/dto.RequestNote"
-                        }
+                        "type": "string",
+                        "description": "ID Order",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
                     }
                 ],
                 "responses": {
                     "200": {
-                        "description": "desc",
+                        "description": "OK",
                         "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/models.JSONResponsesSwaggerSucceed"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "data": {
-                                            "$ref": "#/definitions/domain.Note"
-                                        }
-                                    }
-                                }
-                            ]
+                            "$ref": "#/definitions/models.JSONResponsesSwaggerSucceed"
                         }
                     }
                 }
-            },
+            }
+        },
+        "/order/product/{id}": {
             "delete": {
-                "description": "This endpoint for Delete product category by ID",
+                "description": "This endpoint for Delete order Product",
                 "consumes": [
                     "application/json"
                 ],
@@ -191,13 +120,13 @@
                     "application/json"
                 ],
                 "tags": [
-                    "Note"
+                    "Order"
                 ],
-                "summary": "Delete Note by ID",
+                "summary": "Delete Order Product by ID",
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "Note ID",
+                        "description": "Order Product ID",
                         "name": "id",
                         "in": "path",
                         "required": true
@@ -215,7 +144,7 @@
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/domain.Note"
+                                            "$ref": "#/definitions/domain.Order"
                                         }
                                     }
                                 }
@@ -225,9 +154,9 @@
                 }
             }
         },
-        "/user/authentications": {
-            "put": {
-                "description": "This endpoint for Refresh Authentication",
+        "/order/seller/{id}": {
+            "get": {
+                "description": "This endpoint for fetch order by ID",
                 "consumes": [
                     "application/json"
                 ],
@@ -235,20 +164,43 @@
                     "application/json"
                 ],
                 "tags": [
-                    "User"
+                    "Order"
                 ],
-                "summary": "Refresh Authentication",
+                "summary": "FetchRatingSeller by ID",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Order Id",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
                 "responses": {
                     "200": {
-                        "description": "OK",
+                        "description": "desc",
                         "schema": {
-                            "$ref": "#/definitions/models.JSONResponsesSwaggerSucceed"
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/models.JSONResponsesSwaggerSucceed"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/domain.Order"
+                                        }
+                                    }
+                                }
+                            ]
                         }
                     }
                 }
-            },
-            "post": {
-                "description": "This endpoint for Login Authentication",
+            }
+        },
+        "/order/{id}": {
+            "get": {
+                "description": "This endpoint for fetch order by ID",
                 "consumes": [
                     "application/json"
                 ],
@@ -256,31 +208,41 @@
                     "application/json"
                 ],
                 "tags": [
-                    "User"
+                    "Order"
                 ],
-                "summary": "Login Authentication",
+                "summary": "Fetch Order by ID",
                 "parameters": [
                     {
-                        "description": "Login Authentication",
-                        "name": "services",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/dto.RequestLogin"
-                        }
+                        "type": "string",
+                        "description": "Order Id",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
                     }
                 ],
                 "responses": {
                     "200": {
-                        "description": "OK",
+                        "description": "desc",
                         "schema": {
-                            "$ref": "#/definitions/models.JSONResponsesSwaggerSucceed"
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/models.JSONResponsesSwaggerSucceed"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/domain.Order"
+                                        }
+                                    }
+                                }
+                            ]
                         }
                     }
                 }
             },
             "delete": {
-                "description": "This endpoint for Delete Authentication",
+                "description": "This endpoint for Delete order",
                 "consumes": [
                     "application/json"
                 ],
@@ -288,9 +250,62 @@
                     "application/json"
                 ],
                 "tags": [
-                    "User"
+                    "Order"
                 ],
-                "summary": "Delete Authentication",
+                "summary": "Delete Order by ID",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Order Id",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "desc",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/models.JSONResponsesSwaggerSucceed"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/domain.Order"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
+        "/order/{id}/arrived": {
+            "patch": {
+                "description": "This endpoint for UpdateStatusOrderToArrived",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Order"
+                ],
+                "summary": "UpdateStatusOrderToArrived",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "ID Order",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -301,9 +316,9 @@
                 }
             }
         },
-        "/users": {
-            "post": {
-                "description": "This endpoint for Add User",
+        "/order/{id}/finished": {
+            "patch": {
+                "description": "This endpoint for UpdateStatusOrderToFinished",
                 "consumes": [
                     "application/json"
                 ],
@@ -311,18 +326,194 @@
                     "application/json"
                 ],
                 "tags": [
-                    "User"
+                    "Order"
                 ],
-                "summary": "Add User",
+                "summary": "UpdateStatusOrderToFinished",
                 "parameters": [
                     {
-                        "description": "Login Authentication",
+                        "type": "string",
+                        "description": "ID Order",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.JSONResponsesSwaggerSucceed"
+                        }
+                    }
+                }
+            }
+        },
+        "/order/{id}/pack": {
+            "patch": {
+                "description": "This endpoint for UpdateStatusOrderToPacking",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Order"
+                ],
+                "summary": "UpdateStatusOrderToPacking",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "ID Order",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.JSONResponsesSwaggerSucceed"
+                        }
+                    }
+                }
+            }
+        },
+        "/order/{id}/pay": {
+            "patch": {
+                "description": "This endpoint for UpdateStatusOrderToPayment",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Order"
+                ],
+                "summary": "UpdateStatusOrderToPayment",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "ID Order",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.JSONResponsesSwaggerSucceed"
+                        }
+                    }
+                }
+            }
+        },
+        "/order/{id}/products": {
+            "post": {
+                "description": "This endpoint for AddOrUpdateOrderProducts",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Order"
+                ],
+                "summary": "AddOrUpdateOrderProducts New Order",
+                "parameters": [
+                    {
+                        "description": "Add or Update Order Product",
                         "name": "services",
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/dto.RequestAddUser"
+                            "$ref": "#/definitions/dto.RequestOrderProduct"
                         }
+                    },
+                    {
+                        "type": "string",
+                        "description": "ID Order",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.JSONResponsesSwaggerSucceed"
+                        }
+                    }
+                }
+            }
+        },
+        "/order/{id}/rating": {
+            "post": {
+                "description": "This endpoint for AddRatingSeller",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Order"
+                ],
+                "summary": "AddRatingSeller",
+                "parameters": [
+                    {
+                        "description": "Request Rating",
+                        "name": "services",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dto.RequestRatingSeller"
+                        }
+                    },
+                    {
+                        "type": "string",
+                        "description": "ID Order",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.JSONResponsesSwaggerSucceed"
+                        }
+                    }
+                }
+            }
+        },
+        "/order/{id}/shipped": {
+            "patch": {
+                "description": "This endpoint for UpdateStatusOrderToShipped",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Order"
+                ],
+                "summary": "UpdateStatusOrderToShipped",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "ID Order",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
                     }
                 ],
                 "responses": {
@@ -337,79 +528,104 @@
         }
     },
     "definitions": {
-        "domain.Note": {
+        "domain.Order": {
             "type": "object",
             "properties": {
-                "creator": {
+                "cancellation_status": {
                     "type": "integer"
-                },
-                "description": {
-                    "type": "string"
                 },
                 "id": {
                     "type": "integer"
                 },
-                "title": {
-                    "type": "string"
+                "is_canceled": {
+                    "type": "boolean"
                 },
-                "user": {
-                    "$ref": "#/definitions/domain.User"
+                "order_rating": {
+                    "type": "integer"
+                },
+                "products": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/domain.OrderProduct"
+                    }
+                },
+                "seller_id": {
+                    "type": "integer"
+                },
+                "status": {
+                    "type": "integer"
+                },
+                "total_order": {
+                    "type": "number"
+                },
+                "user_id": {
+                    "type": "integer"
                 }
             }
         },
-        "domain.User": {
+        "domain.OrderProduct": {
             "type": "object",
             "properties": {
-                "auth_uuid": {
-                    "type": "string"
-                },
-                "full_name": {
-                    "type": "string"
-                },
                 "id": {
                     "type": "integer"
                 },
-                "name": {
+                "order_id": {
+                    "type": "integer"
+                },
+                "price": {
+                    "type": "number"
+                },
+                "product_id": {
                     "type": "string"
                 },
-                "password": {
-                    "type": "string"
+                "quantity": {
+                    "type": "number"
+                },
+                "total_price": {
+                    "type": "number"
                 }
             }
         },
-        "dto.RequestAddUser": {
+        "dto.RequestInitialOrder": {
             "type": "object",
             "properties": {
-                "full_name": {
-                    "type": "string"
+                "products": {
+                    "$ref": "#/definitions/dto.RequestOrderProduct"
                 },
-                "password": {
-                    "type": "string"
-                },
-                "username": {
-                    "type": "string"
+                "seller_id": {
+                    "type": "integer"
                 }
             }
         },
-        "dto.RequestLogin": {
+        "dto.RequestOrderProduct": {
             "type": "object",
             "properties": {
-                "password": {
+                "price": {
+                    "type": "number"
+                },
+                "product_id": {
                     "type": "string"
                 },
-                "username": {
-                    "type": "string"
+                "quantity": {
+                    "type": "number"
                 }
             }
         },
-        "dto.RequestNote": {
+        "dto.RequestRatingSeller": {
             "type": "object",
+            "required": [
+                "rating"
+            ],
             "properties": {
-                "description": {
-                    "type": "string"
-                },
-                "title": {
-                    "type": "string"
+                "rating": {
+                    "type": "integer",
+                    "enum": [
+                        1,
+                        2,
+                        3,
+                        4,
+                        5
+                    ]
                 }
             }
         },

@@ -24,9 +24,9 @@ const docTemplate = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
-        "/notes": {
+        "/category": {
             "get": {
-                "description": "This endpoint for fetch all product category",
+                "description": "This endpoint for fetch all category",
                 "consumes": [
                     "application/json"
                 ],
@@ -34,9 +34,26 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "Note"
+                    "Category"
                 ],
-                "summary": "Fetch All Note",
+                "summary": "Fetch All Category",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "name": "filter",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "name": "page_number",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "name": "page_size",
+                        "in": "query"
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "desc",
@@ -51,7 +68,7 @@ const docTemplate = `{
                                         "data": {
                                             "type": "array",
                                             "items": {
-                                                "$ref": "#/definitions/domain.Note"
+                                                "$ref": "#/definitions/domain.Category"
                                             }
                                         }
                                     }
@@ -60,11 +77,9 @@ const docTemplate = `{
                         }
                     }
                 }
-            }
-        },
-        "/notes/": {
+            },
             "post": {
-                "description": "This endpoint for create new Note",
+                "description": "This endpoint for create new Category",
                 "consumes": [
                     "application/json"
                 ],
@@ -72,17 +87,17 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "Note"
+                    "Category"
                 ],
-                "summary": "Create New Note",
+                "summary": "Create New Category",
                 "parameters": [
                     {
-                        "description": "Create new note",
+                        "description": "Create new services",
                         "name": "services",
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/dto.RequestNote"
+                            "$ref": "#/definitions/dto.RequestCategory"
                         }
                     }
                 ],
@@ -96,9 +111,9 @@ const docTemplate = `{
                 }
             }
         },
-        "/notes/{id}": {
+        "/category/{id}": {
             "get": {
-                "description": "This endpoint for fetch product category by ID",
+                "description": "This endpoint for fetch category by ID",
                 "consumes": [
                     "application/json"
                 ],
@@ -106,13 +121,13 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "Note"
+                    "Category"
                 ],
-                "summary": "Fetch Note by ID",
+                "summary": "Fetch Category by ID",
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "Note ID",
+                        "description": "Category Id",
                         "name": "id",
                         "in": "path",
                         "required": true
@@ -130,7 +145,7 @@ const docTemplate = `{
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/domain.Note"
+                                            "$ref": "#/definitions/domain.Category"
                                         }
                                     }
                                 }
@@ -139,8 +154,8 @@ const docTemplate = `{
                     }
                 }
             },
-            "put": {
-                "description": "This endpoint for Update product category by ID",
+            "delete": {
+                "description": "This endpoint for Delete category",
                 "consumes": [
                     "application/json"
                 ],
@@ -148,24 +163,66 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "Note"
+                    "Category"
                 ],
-                "summary": "Update Note by ID",
+                "summary": "Delete Category by ID",
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "Note ID",
+                        "description": "Category Id",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "desc",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/models.JSONResponsesSwaggerSucceed"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/domain.Category"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            },
+            "patch": {
+                "description": "This endpoint for Update category",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Category"
+                ],
+                "summary": "Update Category by ID",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Category Id",
                         "name": "id",
                         "in": "path",
                         "required": true
                     },
                     {
-                        "description": "Create new note",
+                        "description": "Create new services",
                         "name": "services",
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/dto.RequestNote"
+                            "$ref": "#/definitions/dto.RequestCategory"
                         }
                     }
                 ],
@@ -181,7 +238,62 @@ const docTemplate = `{
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/domain.Note"
+                                            "$ref": "#/definitions/domain.Category"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
+        "/product": {
+            "get": {
+                "description": "This endpoint for fetch all product",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Product"
+                ],
+                "summary": "Fetch All Product",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "name": "filter",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "name": "page_number",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "name": "page_size",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "desc",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/models.JSONResponsesSwaggerSucceed"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/definitions/domain.Product"
+                                            }
                                         }
                                     }
                                 }
@@ -190,8 +302,8 @@ const docTemplate = `{
                     }
                 }
             },
-            "delete": {
-                "description": "This endpoint for Delete product category by ID",
+            "post": {
+                "description": "This endpoint for create new Product",
                 "consumes": [
                     "application/json"
                 ],
@@ -199,13 +311,47 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "Note"
+                    "Product"
                 ],
-                "summary": "Delete Note by ID",
+                "summary": "Create New Product",
+                "parameters": [
+                    {
+                        "description": "Create new services",
+                        "name": "services",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dto.RequestProduct"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.JSONResponsesSwaggerSucceed"
+                        }
+                    }
+                }
+            }
+        },
+        "/product/{id}": {
+            "get": {
+                "description": "This endpoint for fetch product by ID",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Product"
+                ],
+                "summary": "Fetch Product by ID",
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "Note ID",
+                        "description": "Product Id",
                         "name": "id",
                         "in": "path",
                         "required": true
@@ -223,7 +369,100 @@ const docTemplate = `{
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/domain.Note"
+                                            "$ref": "#/definitions/domain.Product"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "description": "This endpoint for Delete product",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Product"
+                ],
+                "summary": "Delete Product by ID",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Product Id",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "desc",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/models.JSONResponsesSwaggerSucceed"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/domain.Product"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            },
+            "patch": {
+                "description": "This endpoint for Update product",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Product"
+                ],
+                "summary": "Update Product by ID",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Product Id",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Create new services",
+                        "name": "services",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dto.RequestProduct"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "desc",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/models.JSONResponsesSwaggerSucceed"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/domain.Product"
                                         }
                                     }
                                 }
@@ -233,9 +472,9 @@ const docTemplate = `{
                 }
             }
         },
-        "/user/authentications": {
-            "put": {
-                "description": "This endpoint for Refresh Authentication",
+        "/wishlist": {
+            "get": {
+                "description": "This endpoint for fetch all wishlist",
                 "consumes": [
                     "application/json"
                 ],
@@ -243,20 +482,52 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "User"
+                    "Wishlist"
                 ],
-                "summary": "Refresh Authentication",
+                "summary": "Fetch All Wishlist",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "name": "filter",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "name": "page_number",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "name": "page_size",
+                        "in": "query"
+                    }
+                ],
                 "responses": {
                     "200": {
-                        "description": "OK",
+                        "description": "desc",
                         "schema": {
-                            "$ref": "#/definitions/models.JSONResponsesSwaggerSucceed"
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/models.JSONResponsesSwaggerSucceed"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/definitions/domain.Wishlist"
+                                            }
+                                        }
+                                    }
+                                }
+                            ]
                         }
                     }
                 }
             },
             "post": {
-                "description": "This endpoint for Login Authentication",
+                "description": "This endpoint for create new Wishlist",
                 "consumes": [
                     "application/json"
                 ],
@@ -264,41 +535,20 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "User"
+                    "Wishlist"
                 ],
-                "summary": "Login Authentication",
+                "summary": "Create New Wishlist",
                 "parameters": [
                     {
-                        "description": "Login Authentication",
+                        "description": "Create new services",
                         "name": "services",
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/dto.RequestLogin"
+                            "$ref": "#/definitions/dto.RequestWishlist"
                         }
                     }
                 ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/models.JSONResponsesSwaggerSucceed"
-                        }
-                    }
-                }
-            },
-            "delete": {
-                "description": "This endpoint for Delete Authentication",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "User"
-                ],
-                "summary": "Delete Authentication",
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -309,9 +559,9 @@ const docTemplate = `{
                 }
             }
         },
-        "/users": {
-            "post": {
-                "description": "This endpoint for Add User",
+        "/wishlist/{id}": {
+            "get": {
+                "description": "This endpoint for fetch wishlist by ID",
                 "consumes": [
                     "application/json"
                 ],
@@ -319,25 +569,77 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "User"
+                    "Wishlist"
                 ],
-                "summary": "Add User",
+                "summary": "Fetch Wishlist by ID",
                 "parameters": [
                     {
-                        "description": "Login Authentication",
-                        "name": "services",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/dto.RequestAddUser"
-                        }
+                        "type": "string",
+                        "description": "Wishlist Id",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
                     }
                 ],
                 "responses": {
                     "200": {
-                        "description": "OK",
+                        "description": "desc",
                         "schema": {
-                            "$ref": "#/definitions/models.JSONResponsesSwaggerSucceed"
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/models.JSONResponsesSwaggerSucceed"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/domain.Wishlist"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "description": "This endpoint for Delete wishlist",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Wishlist"
+                ],
+                "summary": "Delete Wishlist by ID",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Wishlist Id",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "desc",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/models.JSONResponsesSwaggerSucceed"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/domain.Wishlist"
+                                        }
+                                    }
+                                }
+                            ]
                         }
                     }
                 }
@@ -345,78 +647,111 @@ const docTemplate = `{
         }
     },
     "definitions": {
-        "domain.Note": {
+        "domain.Category": {
             "type": "object",
             "properties": {
-                "creator": {
-                    "type": "integer"
-                },
-                "description": {
-                    "type": "string"
-                },
                 "id": {
-                    "type": "integer"
-                },
-                "title": {
                     "type": "string"
-                },
-                "user": {
-                    "$ref": "#/definitions/domain.User"
-                }
-            }
-        },
-        "domain.User": {
-            "type": "object",
-            "properties": {
-                "auth_uuid": {
-                    "type": "string"
-                },
-                "full_name": {
-                    "type": "string"
-                },
-                "id": {
-                    "type": "integer"
                 },
                 "name": {
                     "type": "string"
                 },
-                "password": {
-                    "type": "string"
+                "products": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/domain.Product"
+                    }
                 }
             }
         },
-        "dto.RequestAddUser": {
+        "domain.Product": {
             "type": "object",
             "properties": {
-                "full_name": {
+                "category_id": {
                     "type": "string"
                 },
-                "password": {
-                    "type": "string"
-                },
-                "username": {
-                    "type": "string"
-                }
-            }
-        },
-        "dto.RequestLogin": {
-            "type": "object",
-            "properties": {
-                "password": {
-                    "type": "string"
-                },
-                "username": {
-                    "type": "string"
-                }
-            }
-        },
-        "dto.RequestNote": {
-            "type": "object",
-            "properties": {
                 "description": {
                     "type": "string"
                 },
-                "title": {
+                "id": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "price": {
+                    "type": "number"
+                },
+                "stock": {
+                    "type": "integer"
+                },
+                "user_id": {
+                    "type": "integer"
+                }
+            }
+        },
+        "domain.Wishlist": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "string"
+                },
+                "product": {
+                    "$ref": "#/definitions/domain.Product"
+                },
+                "product_id": {
+                    "type": "string"
+                },
+                "user_id": {
+                    "type": "integer"
+                }
+            }
+        },
+        "dto.RequestCategory": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                }
+            }
+        },
+        "dto.RequestProduct": {
+            "type": "object",
+            "properties": {
+                "category_id": {
+                    "type": "string"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "price": {
+                    "type": "number"
+                },
+                "stock": {
+                    "type": "integer"
+                }
+            }
+        },
+        "dto.RequestWishlist": {
+            "type": "object",
+            "required": [
+                "id",
+                "product_id"
+            ],
+            "properties": {
+                "id": {
+                    "type": "string"
+                },
+                "product_id": {
                     "type": "string"
                 }
             }

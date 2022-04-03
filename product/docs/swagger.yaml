@@ -1,53 +1,75 @@
 basePath: /api
 definitions:
-  domain.Note:
+  domain.Category:
     properties:
-      creator:
-        type: integer
-      description:
-        type: string
       id:
-        type: integer
-      title:
         type: string
-      user:
-        $ref: '#/definitions/domain.User'
-    type: object
-  domain.User:
-    properties:
-      auth_uuid:
-        type: string
-      full_name:
-        type: string
-      id:
-        type: integer
       name:
         type: string
-      password:
-        type: string
+      products:
+        items:
+          $ref: '#/definitions/domain.Product'
+        type: array
     type: object
-  dto.RequestAddUser:
+  domain.Product:
     properties:
-      full_name:
+      category_id:
         type: string
-      password:
-        type: string
-      username:
-        type: string
-    type: object
-  dto.RequestLogin:
-    properties:
-      password:
-        type: string
-      username:
-        type: string
-    type: object
-  dto.RequestNote:
-    properties:
       description:
         type: string
-      title:
+      id:
         type: string
+      name:
+        type: string
+      price:
+        type: number
+      stock:
+        type: integer
+      user_id:
+        type: integer
+    type: object
+  domain.Wishlist:
+    properties:
+      id:
+        type: string
+      product:
+        $ref: '#/definitions/domain.Product'
+      product_id:
+        type: string
+      user_id:
+        type: integer
+    type: object
+  dto.RequestCategory:
+    properties:
+      id:
+        type: string
+      name:
+        type: string
+    type: object
+  dto.RequestProduct:
+    properties:
+      category_id:
+        type: string
+      description:
+        type: string
+      id:
+        type: string
+      name:
+        type: string
+      price:
+        type: number
+      stock:
+        type: integer
+    type: object
+  dto.RequestWishlist:
+    properties:
+      id:
+        type: string
+      product_id:
+        type: string
+    required:
+    - id
+    - product_id
     type: object
   models.JSONResponsesSwaggerSucceed:
     properties:
@@ -75,11 +97,21 @@ info:
   title: Mini Rest Api
   version: "1.0"
 paths:
-  /notes:
+  /category:
     get:
       consumes:
       - application/json
-      description: This endpoint for fetch all product category
+      description: This endpoint for fetch all category
+      parameters:
+      - in: query
+        name: filter
+        type: string
+      - in: query
+        name: page_number
+        type: integer
+      - in: query
+        name: page_size
+        type: integer
       produces:
       - application/json
       responses:
@@ -91,24 +123,23 @@ paths:
             - properties:
                 data:
                   items:
-                    $ref: '#/definitions/domain.Note'
+                    $ref: '#/definitions/domain.Category'
                   type: array
               type: object
-      summary: Fetch All Note
+      summary: Fetch All Category
       tags:
-      - Note
-  /notes/:
+      - Category
     post:
       consumes:
       - application/json
-      description: This endpoint for create new Note
+      description: This endpoint for create new Category
       parameters:
-      - description: Create new note
+      - description: Create new services
         in: body
         name: services
         required: true
         schema:
-          $ref: '#/definitions/dto.RequestNote'
+          $ref: '#/definitions/dto.RequestCategory'
       produces:
       - application/json
       responses:
@@ -116,16 +147,16 @@ paths:
           description: OK
           schema:
             $ref: '#/definitions/models.JSONResponsesSwaggerSucceed'
-      summary: Create New Note
+      summary: Create New Category
       tags:
-      - Note
-  /notes/{id}:
+      - Category
+  /category/{id}:
     delete:
       consumes:
       - application/json
-      description: This endpoint for Delete product category by ID
+      description: This endpoint for Delete category
       parameters:
-      - description: Note ID
+      - description: Category Id
         in: path
         name: id
         required: true
@@ -140,17 +171,17 @@ paths:
             - $ref: '#/definitions/models.JSONResponsesSwaggerSucceed'
             - properties:
                 data:
-                  $ref: '#/definitions/domain.Note'
+                  $ref: '#/definitions/domain.Category'
               type: object
-      summary: Delete Note by ID
+      summary: Delete Category by ID
       tags:
-      - Note
+      - Category
     get:
       consumes:
       - application/json
-      description: This endpoint for fetch product category by ID
+      description: This endpoint for fetch category by ID
       parameters:
-      - description: Note ID
+      - description: Category Id
         in: path
         name: id
         required: true
@@ -165,27 +196,27 @@ paths:
             - $ref: '#/definitions/models.JSONResponsesSwaggerSucceed'
             - properties:
                 data:
-                  $ref: '#/definitions/domain.Note'
+                  $ref: '#/definitions/domain.Category'
               type: object
-      summary: Fetch Note by ID
+      summary: Fetch Category by ID
       tags:
-      - Note
-    put:
+      - Category
+    patch:
       consumes:
       - application/json
-      description: This endpoint for Update product category by ID
+      description: This endpoint for Update category
       parameters:
-      - description: Note ID
+      - description: Category Id
         in: path
         name: id
         required: true
         type: string
-      - description: Create new note
+      - description: Create new services
         in: body
         name: services
         required: true
         schema:
-          $ref: '#/definitions/dto.RequestNote'
+          $ref: '#/definitions/dto.RequestCategory'
       produces:
       - application/json
       responses:
@@ -196,73 +227,189 @@ paths:
             - $ref: '#/definitions/models.JSONResponsesSwaggerSucceed'
             - properties:
                 data:
-                  $ref: '#/definitions/domain.Note'
+                  $ref: '#/definitions/domain.Category'
               type: object
-      summary: Update Note by ID
+      summary: Update Category by ID
       tags:
-      - Note
-  /user/authentications:
+      - Category
+  /product:
+    get:
+      consumes:
+      - application/json
+      description: This endpoint for fetch all product
+      parameters:
+      - in: query
+        name: filter
+        type: string
+      - in: query
+        name: page_number
+        type: integer
+      - in: query
+        name: page_size
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: desc
+          schema:
+            allOf:
+            - $ref: '#/definitions/models.JSONResponsesSwaggerSucceed'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/domain.Product'
+                  type: array
+              type: object
+      summary: Fetch All Product
+      tags:
+      - Product
+    post:
+      consumes:
+      - application/json
+      description: This endpoint for create new Product
+      parameters:
+      - description: Create new services
+        in: body
+        name: services
+        required: true
+        schema:
+          $ref: '#/definitions/dto.RequestProduct'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.JSONResponsesSwaggerSucceed'
+      summary: Create New Product
+      tags:
+      - Product
+  /product/{id}:
     delete:
       consumes:
       - application/json
-      description: This endpoint for Delete Authentication
+      description: This endpoint for Delete product
+      parameters:
+      - description: Product Id
+        in: path
+        name: id
+        required: true
+        type: string
       produces:
       - application/json
       responses:
         "200":
-          description: OK
+          description: desc
           schema:
-            $ref: '#/definitions/models.JSONResponsesSwaggerSucceed'
-      summary: Delete Authentication
+            allOf:
+            - $ref: '#/definitions/models.JSONResponsesSwaggerSucceed'
+            - properties:
+                data:
+                  $ref: '#/definitions/domain.Product'
+              type: object
+      summary: Delete Product by ID
       tags:
-      - User
-    post:
+      - Product
+    get:
       consumes:
       - application/json
-      description: This endpoint for Login Authentication
+      description: This endpoint for fetch product by ID
       parameters:
-      - description: Login Authentication
+      - description: Product Id
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: desc
+          schema:
+            allOf:
+            - $ref: '#/definitions/models.JSONResponsesSwaggerSucceed'
+            - properties:
+                data:
+                  $ref: '#/definitions/domain.Product'
+              type: object
+      summary: Fetch Product by ID
+      tags:
+      - Product
+    patch:
+      consumes:
+      - application/json
+      description: This endpoint for Update product
+      parameters:
+      - description: Product Id
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Create new services
         in: body
         name: services
         required: true
         schema:
-          $ref: '#/definitions/dto.RequestLogin'
+          $ref: '#/definitions/dto.RequestProduct'
       produces:
       - application/json
       responses:
         "200":
-          description: OK
+          description: desc
           schema:
-            $ref: '#/definitions/models.JSONResponsesSwaggerSucceed'
-      summary: Login Authentication
+            allOf:
+            - $ref: '#/definitions/models.JSONResponsesSwaggerSucceed'
+            - properties:
+                data:
+                  $ref: '#/definitions/domain.Product'
+              type: object
+      summary: Update Product by ID
       tags:
-      - User
-    put:
+      - Product
+  /wishlist:
+    get:
       consumes:
       - application/json
-      description: This endpoint for Refresh Authentication
+      description: This endpoint for fetch all wishlist
+      parameters:
+      - in: query
+        name: filter
+        type: string
+      - in: query
+        name: page_number
+        type: integer
+      - in: query
+        name: page_size
+        type: integer
       produces:
       - application/json
       responses:
         "200":
-          description: OK
+          description: desc
           schema:
-            $ref: '#/definitions/models.JSONResponsesSwaggerSucceed'
-      summary: Refresh Authentication
+            allOf:
+            - $ref: '#/definitions/models.JSONResponsesSwaggerSucceed'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/domain.Wishlist'
+                  type: array
+              type: object
+      summary: Fetch All Wishlist
       tags:
-      - User
-  /users:
+      - Wishlist
     post:
       consumes:
       - application/json
-      description: This endpoint for Add User
+      description: This endpoint for create new Wishlist
       parameters:
-      - description: Login Authentication
+      - description: Create new services
         in: body
         name: services
         required: true
         schema:
-          $ref: '#/definitions/dto.RequestAddUser'
+          $ref: '#/definitions/dto.RequestWishlist'
       produces:
       - application/json
       responses:
@@ -270,7 +417,58 @@ paths:
           description: OK
           schema:
             $ref: '#/definitions/models.JSONResponsesSwaggerSucceed'
-      summary: Add User
+      summary: Create New Wishlist
       tags:
-      - User
+      - Wishlist
+  /wishlist/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: This endpoint for Delete wishlist
+      parameters:
+      - description: Wishlist Id
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: desc
+          schema:
+            allOf:
+            - $ref: '#/definitions/models.JSONResponsesSwaggerSucceed'
+            - properties:
+                data:
+                  $ref: '#/definitions/domain.Wishlist'
+              type: object
+      summary: Delete Wishlist by ID
+      tags:
+      - Wishlist
+    get:
+      consumes:
+      - application/json
+      description: This endpoint for fetch wishlist by ID
+      parameters:
+      - description: Wishlist Id
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: desc
+          schema:
+            allOf:
+            - $ref: '#/definitions/models.JSONResponsesSwaggerSucceed'
+            - properties:
+                data:
+                  $ref: '#/definitions/domain.Wishlist'
+              type: object
+      summary: Fetch Wishlist by ID
+      tags:
+      - Wishlist
 swagger: "2.0"

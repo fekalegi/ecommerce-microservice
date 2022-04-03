@@ -99,7 +99,7 @@ paths:
       summary: Create New Role
       tags:
       - Role
-  /role{id}:
+  /role/{id}:
     delete:
       consumes:
       - application/json

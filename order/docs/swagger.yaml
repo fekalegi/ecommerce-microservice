@@ -1,53 +1,71 @@
 basePath: /api
 definitions:
-  domain.Note:
+  domain.Order:
     properties:
-      creator:
+      cancellation_status:
         type: integer
-      description:
-        type: string
       id:
         type: integer
-      title:
-        type: string
-      user:
-        $ref: '#/definitions/domain.User'
+      is_canceled:
+        type: boolean
+      order_rating:
+        type: integer
+      products:
+        items:
+          $ref: '#/definitions/domain.OrderProduct'
+        type: array
+      seller_id:
+        type: integer
+      status:
+        type: integer
+      total_order:
+        type: number
+      user_id:
+        type: integer
     type: object
-  domain.User:
+  domain.OrderProduct:
     properties:
-      auth_uuid:
-        type: string
-      full_name:
-        type: string
       id:
         type: integer
-      name:
+      order_id:
+        type: integer
+      price:
+        type: number
+      product_id:
         type: string
-      password:
-        type: string
+      quantity:
+        type: number
+      total_price:
+        type: number
     type: object
-  dto.RequestAddUser:
+  dto.RequestInitialOrder:
     properties:
-      full_name:
-        type: string
-      password:
-        type: string
-      username:
-        type: string
+      products:
+        $ref: '#/definitions/dto.RequestOrderProduct'
+      seller_id:
+        type: integer
     type: object
-  dto.RequestLogin:
+  dto.RequestOrderProduct:
     properties:
-      password:
+      price:
+        type: number
+      product_id:
         type: string
-      username:
-        type: string
+      quantity:
+        type: number
     type: object
-  dto.RequestNote:
+  dto.RequestRatingSeller:
     properties:
-      description:
-        type: string
-      title:
-        type: string
+      rating:
+        enum:
+        - 1
+        - 2
+        - 3
+        - 4
+        - 5
+        type: integer
+    required:
+    - rating
     type: object
   models.JSONResponsesSwaggerSucceed:
     properties:
@@ -75,11 +93,21 @@ info:
   title: Mini Rest Api
   version: "1.0"
 paths:
-  /notes:
+  /order:
     get:
       consumes:
       - application/json
-      description: This endpoint for fetch all product category
+      description: This endpoint for fetch all order
+      parameters:
+      - in: query
+        name: page_number
+        type: integer
+      - in: query
+        name: page_size
+        type: integer
+      - in: query
+        name: status
+        type: integer
       produces:
       - application/json
       responses:
@@ -91,24 +119,28 @@ paths:
             - properties:
                 data:
                   items:
-                    $ref: '#/definitions/domain.Note'
+                    $ref: '#/definitions/domain.Order'
                   type: array
               type: object
-      summary: Fetch All Note
+      summary: Fetch All Order
       tags:
-      - Note
-  /notes/:
+      - Order
     post:
       consumes:
       - application/json
-      description: This endpoint for create new Note
+      description: This endpoint for CreateInitialOrder
       parameters:
-      - description: Create new note
+      - description: Create new order
         in: body
         name: services
         required: true
         schema:
-          $ref: '#/definitions/dto.RequestNote'
+          $ref: '#/definitions/dto.RequestInitialOrder'
+      - description: ID Order
+        in: path
+        name: id
+        required: true
+        type: string
       produces:
       - application/json
       responses:
@@ -116,16 +148,16 @@ paths:
           description: OK
           schema:
             $ref: '#/definitions/models.JSONResponsesSwaggerSucceed'
-      summary: Create New Note
+      summary: CreateInitialOrder New Order
       tags:
-      - Note
-  /notes/{id}:
+      - Order
+  /order/{id}:
     delete:
       consumes:
       - application/json
-      description: This endpoint for Delete product category by ID
+      description: This endpoint for Delete order
       parameters:
-      - description: Note ID
+      - description: Order Id
         in: path
         name: id
         required: true
@@ -140,17 +172,17 @@ paths:
             - $ref: '#/definitions/models.JSONResponsesSwaggerSucceed'
             - properties:
                 data:
-                  $ref: '#/definitions/domain.Note'
+                  $ref: '#/definitions/domain.Order'
               type: object
-      summary: Delete Note by ID
+      summary: Delete Order by ID
       tags:
-      - Note
+      - Order
     get:
       consumes:
       - application/json
-      description: This endpoint for fetch product category by ID
+      description: This endpoint for fetch order by ID
       parameters:
-      - description: Note ID
+      - description: Order Id
         in: path
         name: id
         required: true
@@ -165,112 +197,220 @@ paths:
             - $ref: '#/definitions/models.JSONResponsesSwaggerSucceed'
             - properties:
                 data:
-                  $ref: '#/definitions/domain.Note'
+                  $ref: '#/definitions/domain.Order'
               type: object
-      summary: Fetch Note by ID
+      summary: Fetch Order by ID
       tags:
-      - Note
-    put:
+      - Order
+  /order/{id}/arrived:
+    patch:
       consumes:
       - application/json
-      description: This endpoint for Update product category by ID
+      description: This endpoint for UpdateStatusOrderToArrived
       parameters:
-      - description: Note ID
+      - description: ID Order
         in: path
         name: id
         required: true
         type: string
-      - description: Create new note
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.JSONResponsesSwaggerSucceed'
+      summary: UpdateStatusOrderToArrived
+      tags:
+      - Order
+  /order/{id}/finished:
+    patch:
+      consumes:
+      - application/json
+      description: This endpoint for UpdateStatusOrderToFinished
+      parameters:
+      - description: ID Order
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.JSONResponsesSwaggerSucceed'
+      summary: UpdateStatusOrderToFinished
+      tags:
+      - Order
+  /order/{id}/pack:
+    patch:
+      consumes:
+      - application/json
+      description: This endpoint for UpdateStatusOrderToPacking
+      parameters:
+      - description: ID Order
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.JSONResponsesSwaggerSucceed'
+      summary: UpdateStatusOrderToPacking
+      tags:
+      - Order
+  /order/{id}/pay:
+    patch:
+      consumes:
+      - application/json
+      description: This endpoint for UpdateStatusOrderToPayment
+      parameters:
+      - description: ID Order
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.JSONResponsesSwaggerSucceed'
+      summary: UpdateStatusOrderToPayment
+      tags:
+      - Order
+  /order/{id}/products:
+    post:
+      consumes:
+      - application/json
+      description: This endpoint for AddOrUpdateOrderProducts
+      parameters:
+      - description: Add or Update Order Product
         in: body
         name: services
         required: true
         schema:
-          $ref: '#/definitions/dto.RequestNote'
+          $ref: '#/definitions/dto.RequestOrderProduct'
+      - description: ID Order
+        in: path
+        name: id
+        required: true
+        type: string
       produces:
       - application/json
       responses:
         "200":
-          description: desc
+          description: OK
           schema:
-            allOf:
-            - $ref: '#/definitions/models.JSONResponsesSwaggerSucceed'
-            - properties:
-                data:
-                  $ref: '#/definitions/domain.Note'
-              type: object
-      summary: Update Note by ID
+            $ref: '#/definitions/models.JSONResponsesSwaggerSucceed'
+      summary: AddOrUpdateOrderProducts New Order
       tags:
-      - Note
-  /user/authentications:
+      - Order
+  /order/{id}/rating:
+    post:
+      consumes:
+      - application/json
+      description: This endpoint for AddRatingSeller
+      parameters:
+      - description: Request Rating
+        in: body
+        name: services
+        required: true
+        schema:
+          $ref: '#/definitions/dto.RequestRatingSeller'
+      - description: ID Order
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.JSONResponsesSwaggerSucceed'
+      summary: AddRatingSeller
+      tags:
+      - Order
+  /order/{id}/shipped:
+    patch:
+      consumes:
+      - application/json
+      description: This endpoint for UpdateStatusOrderToShipped
+      parameters:
+      - description: ID Order
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.JSONResponsesSwaggerSucceed'
+      summary: UpdateStatusOrderToShipped
+      tags:
+      - Order
+  /order/product/{id}:
     delete:
       consumes:
       - application/json
-      description: This endpoint for Delete Authentication
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/models.JSONResponsesSwaggerSucceed'
-      summary: Delete Authentication
-      tags:
-      - User
-    post:
-      consumes:
-      - application/json
-      description: This endpoint for Login Authentication
+      description: This endpoint for Delete order Product
       parameters:
-      - description: Login Authentication
-        in: body
-        name: services
+      - description: Order Product ID
+        in: path
+        name: id
         required: true
-        schema:
-          $ref: '#/definitions/dto.RequestLogin'
+        type: string
       produces:
       - application/json
       responses:
         "200":
-          description: OK
+          description: desc
           schema:
-            $ref: '#/definitions/models.JSONResponsesSwaggerSucceed'
-      summary: Login Authentication
+            allOf:
+            - $ref: '#/definitions/models.JSONResponsesSwaggerSucceed'
+            - properties:
+                data:
+                  $ref: '#/definitions/domain.Order'
+              type: object
+      summary: Delete Order Product by ID
       tags:
-      - User
-    put:
+      - Order
+  /order/seller/{id}:
+    get:
       consumes:
       - application/json
-      description: This endpoint for Refresh Authentication
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/models.JSONResponsesSwaggerSucceed'
-      summary: Refresh Authentication
-      tags:
-      - User
-  /users:
-    post:
-      consumes:
-      - application/json
-      description: This endpoint for Add User
+      description: This endpoint for fetch order by ID
       parameters:
-      - description: Login Authentication
-        in: body
-        name: services
+      - description: Order Id
+        in: path
+        name: id
         required: true
-        schema:
-          $ref: '#/definitions/dto.RequestAddUser'
+        type: string
       produces:
       - application/json
       responses:
         "200":
-          description: OK
+          description: desc
           schema:
-            $ref: '#/definitions/models.JSONResponsesSwaggerSucceed'
-      summary: Add User
+            allOf:
+            - $ref: '#/definitions/models.JSONResponsesSwaggerSucceed'
+            - properties:
+                data:
+                  $ref: '#/definitions/domain.Order'
+              type: object
+      summary: FetchRatingSeller by ID
       tags:
-      - User
+      - Order
 swagger: "2.0"
