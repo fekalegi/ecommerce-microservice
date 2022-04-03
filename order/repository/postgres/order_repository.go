@@ -38,7 +38,9 @@ func (u orderRepo) FindRatingSellerID(sellerID int) (*domain.SellerRating, error
 func (u orderRepo) FindRatingSellerBySellerID(sellerID int) (domain.SellerRating, error) {
 	var sellerRating domain.SellerRating
 	err := u.db.First(&sellerRating, sellerID).Error
-	if err != nil {
+	if err != nil && errors.Is(err, gorm.ErrRecordNotFound) {
+		return domain.SellerRating{}, nil
+	} else if err != nil {
 		return domain.SellerRating{}, err
 	}
 	return sellerRating, nil

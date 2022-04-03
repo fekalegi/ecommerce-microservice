@@ -3,6 +3,7 @@ package order
 import (
 	"ecommerce-microservice/order/common/command"
 	"ecommerce-microservice/order/common/dto"
+	"log"
 )
 
 func (i impl) AddRatingSeller(request dto.RequestRatingSeller, userID int, orderID int64) (dto.JsonResponses, error) {
@@ -15,6 +16,7 @@ func (i impl) AddRatingSeller(request dto.RequestRatingSeller, userID int, order
 	}
 
 	sellerRating, err := i.repository.FindRatingSellerBySellerID(order.SellerID)
+	log.Println(sellerRating)
 
 	switch request.Rating {
 	case 1:
@@ -33,14 +35,18 @@ func (i impl) AddRatingSeller(request dto.RequestRatingSeller, userID int, order
 
 	if err == nil && sellerRating.SellerID == 0 {
 		sellerRating.SellerID = userID
+		log.Println("test")
 		err = i.repository.CreateRatingSeller(sellerRating)
 	} else if err != nil {
+		log.Println()
 		return command.InternalServerResponses("Internal Server Error"), err
 	} else {
+		log.Println("update")
 		err = i.repository.UpdateRatingSeller(sellerRating)
 	}
 
 	if err != nil {
+		log.Println(err)
 		return command.InternalServerResponses("Internal Server Error"), err
 	}
 

@@ -38,8 +38,8 @@ func (u userRepository) FindAllUser(offset int, limit int, filter string) ([]dom
 	var user []domain.User
 	var count int64
 
-	err := u.db.
-		Where("name ILIKE ? ", "%"+filter+"%").Offset(offset).Limit(limit).Find(&user).
+	err := u.db.Preload("Role").
+		Where("full_name ILIKE ? ", "%"+filter+"%").Offset(offset).Limit(limit).Find(&user).
 		Offset(-1).Limit(-1).Count(&count).Error
 	if err != nil && errors.Is(err, gorm.ErrRecordNotFound) {
 		return nil, 0, nil

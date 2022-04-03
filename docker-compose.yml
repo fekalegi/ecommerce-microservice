@@ -58,11 +58,17 @@ services:
     depends_on:
       "db-postgres":
         condition: service_started
+      "kafka1":
+        condition: service_started
     build:
       dockerfile: Dockerfile
       context: ./order
     networks:
       - mini-rest
+    ports:
+      - "5001:5001"
+    expose:
+      - 5001
   product:
     depends_on:
       "db-postgres":
@@ -74,6 +80,23 @@ services:
       context: ./product
     networks:
       - mini-rest
+    ports:
+      - "5002:5002"
+    expose:
+      - 5002
+  user:
+    depends_on:
+      "db-postgres":
+        condition: service_started
+    build:
+      dockerfile: Dockerfile
+      context: ./user
+    networks:
+      - mini-rest
+    ports:
+      - "5000:5000"
+    expose:
+      - 5000
 networks:
   mini-rest:
     driver: bridge
