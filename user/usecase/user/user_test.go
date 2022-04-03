@@ -7,7 +7,7 @@ import (
 	"ecommerce-microservice/user/usecase"
 	"ecommerce-microservice/user/usecase/user"
 	"errors"
-	"github.com/fekalegi/custom-package/authentications/middlewares/common/interfaces"
+	mock_service "github.com/fekalegi/custom-package/authentications/mocks/services"
 	"github.com/golang/mock/gomock"
 	"github.com/google/uuid"
 	. "github.com/onsi/ginkgo"
@@ -23,7 +23,7 @@ var _ = Describe("UserService", func() {
 		repo      *mock_repository.MockUserRepository
 		mockUser  domain.User
 		mockUsers []domain.User
-		helper    interfaces.HelperInterface
+		helper    *mock_service.MockHelperInterface
 		mockUID   uuid.UUID
 		//mockUID2  uuid.UUID
 	)
@@ -101,23 +101,6 @@ var _ = Describe("UserService", func() {
 		})
 	})
 
-	Describe("CheckLogin", func() {
-		It("return success", func() {
-			repo.EXPECT().CheckLogin(gomock.Any(), gomock.Any()).Return(&mockUser, nil)
-			repo.EXPECT().UpdateAuthUUID(gomock.Any(), gomock.Any()).Return(nil)
-			resp, err := userUC.CheckLogin("feka", "feka")
-			Expect(err).Should(Succeed())
-			Expect(resp.Code).Should(Equal(200))
-		})
-
-		It("return error", func() {
-			repo.EXPECT().CheckLogin(gomock.Any(), gomock.Any()).Return(&mockUser, nil)
-			repo.EXPECT().UpdateAuthUUID(gomock.Any(), gomock.Any()).Return(errSomething)
-			_, err := userUC.CheckLogin("feka", "feka")
-			Expect(err).Should(HaveOccurred())
-		})
-	})
-
 	Describe("DeleteAuth", func() {
 		It("return success", func() {
 			repo.EXPECT().FindUserByIDAndAuthID(gomock.Any(), gomock.Any()).Return(&mockUser, nil)
@@ -163,6 +146,45 @@ var _ = Describe("UserService", func() {
 		It("return error", func() {
 			repo.EXPECT().FindAllUser(gomock.Any(), gomock.Any(), gomock.Any()).Return(nil, int64(0), errSomething)
 			_, err := userUC.FetchAllUser(dto.RequestPagination{})
+			Expect(err).Should(HaveOccurred())
+		})
+	})
+
+	Describe("FetchUserByID", func() {
+		It("return succeed", func() {
+			repo.EXPECT().FindUserByID(gomock.Any()).Return(&mockUser, nil)
+			resp, err := userUC.FetchUser(1)
+			Expect(err).Should(Succeed())
+			Expect(resp.Data).Should(Equal(&mockUser))
+		})
+
+		It("return error", func() {
+			repo.EXPECT().FindUserByID(gomock.Any()).Return(&mockUser, errSomething)
+			_, err := userUC.FetchUser(1)
+			Expect(err).Should(HaveOccurred())
+		})
+	})
+
+	Describe("UpdateUserByID", func() {
+		mockRequest := dto.RequestUser{
+			Username: "feka",
+			Password: "feka",
+			FullName: "feka",
+			RoleID:   1,
+		}
+
+		It("return succeed", func() {
+			repo.EXPECT().FindUserByID(gomock.Any()).Return(&mockUser, nil)
+			repo.EXPECT().UpdateUser(gomock.Any()).Return(nil)
+			resp, err := userUC.UpdateUser(1, mockRequest)
+			Expect(err).Should(Succeed())
+			Expect(resp.Code).Should(Equal(200))
+		})
+
+		It("return succeed", func() {
+			repo.EXPECT().FindUserByID(gomock.Any()).Return(&mockUser, nil)
+			repo.EXPECT().UpdateUser(gomock.Any()).Return(errSomething)
+			_, err := userUC.UpdateUser(1, mockRequest)
 			Expect(err).Should(HaveOccurred())
 		})
 	})

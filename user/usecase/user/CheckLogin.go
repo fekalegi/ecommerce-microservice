@@ -17,12 +17,12 @@ func (u userImplementation) CheckLogin(username string, password string) (dto.Js
 	}
 
 	authID := uuid.New()
+	log.Println(authID)
 	err = u.repo.UpdateAuthUUID(user.ID, authID)
 	if err != nil {
 		return command.InternalServerResponses("Internal Server Error"), err
 	}
 	conv := strconv.Itoa(user.ID)
-	log.Println(user.Role.Level)
 
 	token, errCreateToken := u.helper.CreateJwtTokenLogin(conv, user.Username, authID, user.Role.Level)
 	if errCreateToken != nil {

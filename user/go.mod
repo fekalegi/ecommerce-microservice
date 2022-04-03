@@ -4,7 +4,7 @@ go 1.17
 
 require (
 	github.com/dgrijalva/jwt-go v3.2.0+incompatible
-	github.com/fekalegi/custom-package v0.0.0-20220401185731-41cf457d21ed
+	github.com/fekalegi/custom-package v0.0.0-20220403054654-101c70dd8a2f
 	github.com/go-playground/validator/v10 v10.10.1
 	github.com/golang/mock v1.6.0
 	github.com/google/uuid v1.3.0
