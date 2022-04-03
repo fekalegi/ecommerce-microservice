@@ -15,7 +15,7 @@ func (u userImplementation) AddUser(request dto.RequestUser) (dto.JsonResponses,
 	}
 	newUser, err := u.repo.AddUser(user)
 	if err != nil {
-		return command.InternalServerResponses("Internal Server Error"), nil
+		return command.InternalServerResponses("Internal Server Error"), err
 	}
 
 	response := dto.ResponseAddUser{

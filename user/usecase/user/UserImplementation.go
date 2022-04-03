@@ -1,9 +1,9 @@
 package user
 
 import (
-	"ecommerce-microservice/user/common/interfaces"
 	"ecommerce-microservice/user/repository"
 	"ecommerce-microservice/user/usecase"
+	"github.com/fekalegi/custom-package/authentications/middlewares/common/interfaces"
 )
 
 type userImplementation struct {

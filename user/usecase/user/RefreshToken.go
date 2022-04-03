@@ -12,7 +12,7 @@ func (u userImplementation) RefreshToken(userID int, authID uuid.UUID) (dto.Json
 	if user == nil && err == nil {
 		return command.NotFoundResponses("User not found"), nil
 	} else if err != nil {
-		return command.InternalServerResponses("Internal server error"), nil
+		return command.InternalServerResponses("Internal server error"), err
 	}
 
 	newAuthID := uuid.New()

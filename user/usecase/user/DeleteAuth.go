@@ -11,11 +11,14 @@ func (u userImplementation) DeleteAuth(userID int, authID uuid.UUID) (dto.JsonRe
 	if user == nil && err == nil {
 		return command.NotFoundResponses("User not found"), nil
 	} else if err != nil {
-		return command.InternalServerResponses("Internal server error"), nil
+		return command.InternalServerResponses("Internal server error"), err
 	}
 
 	nilUUID := uuid.Nil
 	err = u.repo.UpdateAuthUUID(userID, nilUUID)
+	if err != nil {
+		return command.InternalServerResponses("Internal server error"), err
+	}
 
 	return command.SuccessResponses("success"), nil
 }

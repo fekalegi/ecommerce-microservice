@@ -3,11 +3,11 @@ package api
 import (
 	"ecommerce-microservice/user/api/controller"
 	"ecommerce-microservice/user/api/handler"
-	"ecommerce-microservice/user/common/helper"
 	external "ecommerce-microservice/user/infra"
 	"ecommerce-microservice/user/repository/postgres"
 	"ecommerce-microservice/user/usecase/role"
 	"ecommerce-microservice/user/usecase/user"
+	"github.com/fekalegi/custom-package/authentications/middlewares/common/helper"
 	"github.com/labstack/echo/v4"
 	echoSwagger "github.com/swaggo/echo-swagger"
 	"net/http"

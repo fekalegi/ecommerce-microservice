@@ -5,6 +5,8 @@ import (
 	"github.com/google/uuid"
 )
 
+//go:generate mockgen -destination=../mocks/repository/mock_repository.go -package=mock_repository -source=repository_interface.go
+
 type UserRepository interface {
 	CheckLogin(username string, password string) (*domain.User, error)
 	FindUserByID(id int) (*domain.User, error)
