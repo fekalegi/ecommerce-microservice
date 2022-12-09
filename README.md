@@ -1,5 +1,4 @@
 # ecommerce-microservice/user
-Test Case Warung Pintar
 
 Run docker-compose after pull to build and run the application
 ```
